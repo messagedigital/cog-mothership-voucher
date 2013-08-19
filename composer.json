@@ -1,5 +1,5 @@
 {
-	"name": "message/cog-mothership-vouchers",
+	"name": "message/cog-mothership-voucher",
 	"description": "Cog module for face-value vouchers functionality for Mothership Commerce",
 	"keywords": ["commerce", "mothership", "voucher", "credit note", "gift voucher", "money", "cog"],
 	"homepage": "http://message.co.uk",
