@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\Voucher;
+namespace Message\Mothership\Voucher\PaymentMethod;
 
 use Message\Mothership\Commerce\Order\Entity\Payment\MethodInterface;
 
