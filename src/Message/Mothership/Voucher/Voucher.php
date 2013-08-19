@@ -11,7 +11,6 @@ class Voucher
 {
 	public $authorship;
 
-	public $id;
 	public $code;
 	public $currencyID;
 	public $amount;
@@ -21,13 +20,30 @@ class Voucher
 	public $purchasedAsItem;
 	public $usage = array();
 
+	/**
+	 * Get the total amount of this voucher that has been used.
+	 *
+	 * @return float
+	 */
 	public function getAmountUsed()
 	{
+		$return = 0;
 
+		foreach ($this->usage as $payment) {
+			$return += $payment->amount;
+		}
+
+		return $return;
 	}
 
+	/**
+	 * Get the remaining balance for this voucher (the original amount less the
+	 * amount used to date).
+	 *
+	 * @return float
+	 */
 	public function getBalance()
 	{
-
+		return $this->amount - $this->getAmountUsed();
 	}
 }
