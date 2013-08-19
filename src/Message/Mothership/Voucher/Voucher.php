@@ -2,6 +2,8 @@
 
 namespace Message\Mothership\Voucher;
 
+use Message\Cog\ValueObject\Authorship;
+
 /**
  * Represents a single face-value voucher.
  *
@@ -19,6 +21,15 @@ class Voucher
 	public $usedAt;
 	public $purchasedAsItem;
 	public $usage = array();
+
+	public function __construct()
+	{
+		$this->authorship = new Authorship;
+
+		$this->authorship
+			->disableUpdate()
+			->disableDelete();
+	}
 
 	/**
 	 * Get the total amount of this voucher that has been used.
