@@ -1,6 +1,6 @@
 # Mothership Vouchers
 
-This cogule provides face-value voucher functionality for Mothership commerce systems installations. Face-value vouchers can represent "gift vouchers" or "credit notes". They are essentially the same thing.
+This cogule provides face-value voucher functionality for Mothership commerce systems installations. Face-value vouchers can represent "gift vouchers", "credit notes", or any other way the client may wish to market them. They are essentially a code that represents a pre-payment for an order, and they can be partially used and retain a balance.
 
 ## Todo
 
