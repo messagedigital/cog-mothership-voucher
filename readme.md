@@ -4,8 +4,6 @@ This cogule provides face-value voucher functionality for Mothership commerce sy
 
 ## Todo
 
-- New cogule for vouchers
-- New payment method for voucher
 - Model(s) for voucher
 	- authorship data + expiry + used
 	- gift voucher is always ONE currency
