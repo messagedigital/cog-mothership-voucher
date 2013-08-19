@@ -1,0 +1,41 @@
+{
+	"name": "message/cog-mothership-vouchers",
+	"description": "Cog module for face-value vouchers functionality for Mothership Commerce",
+	"keywords": ["commerce", "mothership", "voucher", "credit note", "gift voucher", "money", "cog"],
+	"homepage": "http://message.co.uk",
+	"authors": [
+		{
+			"name" : "The Message Development Team",
+			"email": "dev@message.co.uk"
+		}
+	],
+	"support": {
+		"wiki"  : "http://server.local/wiki/projects/cog",
+		"issues": "http://github.com/messagedigital/cog-mothership-vouchers/issues"
+	},
+	"autoload": {
+		"psr-0": {
+			"Message\\Mothership\\Voucher"      : "src",
+			"Message\\Mothership\\Voucher\\Test": "tests"
+		}
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url" : "http://packages.message.co.uk"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {
+		"php": ">=5.3.0",
+
+		"message/cog-mothership-commerce": "dev-master"
+	},
+	"suggest": {
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
+	}
+}
