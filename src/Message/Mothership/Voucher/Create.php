@@ -107,6 +107,9 @@ class Create implements DB\TransactionalInterface
 			$voucher->expiresAt = $voucher->authorship->createdAt()->add($this->_expiryInterval);
 		}
 
+		// Force voucher ID to uppercase to avoid case sensitivity issues
+		$voucher->id = strtoupper($voucher->id);
+
 		// Validate the voucher before creation
 		$this->_validate($voucher);
 
