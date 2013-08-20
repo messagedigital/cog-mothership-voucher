@@ -17,3 +17,7 @@ This cogule provides face-value voucher functionality for Mothership commerce sy
 	- Set used
 	- Set/change expiry?
 - New user group with access level
+- Stop discounts being applied to voucher products
+	- How to abstract this from commerce sensibly?
+	- New event listener to clear the discount amounts?
+- Force voucher products tax rates to be 0? or does this only apply to the UK
