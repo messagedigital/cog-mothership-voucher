@@ -18,9 +18,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 		);
 	}
 
-	public function generateVouchers(Order\Event\Event $event)
+	public function generateVouchers(Order\Event\TransactionalEvent $event)
 	{
-		$voucherProductIDs = $this->get('cfg')->voucher->productIds;
+		$voucherProductIDs = $this->get('cfg')->voucher->productIDs;
 
 		// Skip if no voucher product IDs are defined in the config
 		if (!$voucherProductIDs || empty($voucherProductIDs)) {
@@ -43,9 +43,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			$voucher->id              = $this->get('voucher.id_generator')->generate();
 			$voucher->purchasedAsItem = $item;
 
-			$this->get('voucher.create')
-				->setTransaction($event->getTransaction())
-				->create($voucher);
+			$create = $this->get('voucher.create');
+			$create->setTransaction($event->getTransaction());
+			$create->create($voucher);
 		}
 	}
 }
