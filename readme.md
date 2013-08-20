@@ -4,12 +4,16 @@ This cogule provides face-value voucher functionality for Mothership commerce sy
 
 ## Todo
 
-- Model(s) for voucher
-	- authorship data + expiry + used
-	- gift voucher is always ONE currency
 - Implement electronic gift vouchers (products tagged for automatic dispatch?)
-- Impment expiry time from configuration
 - order assembler things of vouchers being used as "payments" on the prepared order
 - event listener for when order is created to check if any items are vouchers and generate them if so
 - event listener to email e-vouchers if purchased (can come later)
 - SOP needs to somehow let you print the voucher if there is one in the order
+- Offers interface
+	- Create voucher
+	- Invalidate (expire) voucher
+	- View voucher details (usage etc)
+- Edit decorator
+	- Set used
+	- Set/change expiry?
+- New user group with access level
