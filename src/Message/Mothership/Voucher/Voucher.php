@@ -13,7 +13,7 @@ class Voucher
 {
 	public $authorship;
 
-	public $code;
+	public $id;
 	public $currencyID;
 	public $amount;
 

@@ -15,7 +15,20 @@ class Services implements ServicesInterface
 		};
 
 		$container['voucher.create'] = function($c) {
-			return new Voucher\Loader($c['db.query'], $c['order.item.loader'], $c['order.payment.loader']);
+			$create = new Voucher\Create($c['db.query'], $c['voucher.loader'], $c['user.current']);
+
+			// If config is set for ID length, define it here
+			if ($idLength = $c['cfg']->voucher->idLength) {
+				$create->setIdLength($idLength);
+			}
+
+			// If config is set for expiry interval, define it here
+			if ($interval = $c['cfg']->voucher->expiryInterval) {
+				$interval = \DateInterval::createFromDateString($interval);
+				$create->setExpiryInterval($interval);
+			}
+
+			return $create;
 		};
 
 		// Add voucher payment method

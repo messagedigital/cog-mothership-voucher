@@ -1,5 +1,5 @@
 id-length: 9 # maximum value is 30
-expiry-period:
+expiry-interval:
 products:
   enabled: false
   products:

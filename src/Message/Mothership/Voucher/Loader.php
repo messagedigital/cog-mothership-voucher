@@ -2,6 +2,13 @@
 
 namespace Message\Mothership\Voucher;
 
+use Message\Mothership\Commerce\Order\Entity\Item\Loader as ItemLoader;
+use Message\Mothership\Commerce\Order\Entity\Payment\Loader as PaymentLoader;
+use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
+
+use Message\Cog\DB;
+use Message\Cog\ValueObject\DateTimeImmutable;
+
 /**
  * Face-value voucher loader.
  *
@@ -27,17 +34,6 @@ class Loader
 
 	public function _load($ids, $alwaysReturnArray = false)
 	{
-	// public $authorship;
-
-	// public $code;
-	// public $currencyID;
-	// public $amount;
-
-	// public $expiresAt;
-	// public $usedAt;
-	// public $purchasedAsItem;
-	// public $usage = array();
-
 		if (!is_array($ids)) {
 			$ids = (array) $ids;
 		}
@@ -68,17 +64,40 @@ class Loader
 			// Cast decimals to float
 			$vouchers[$key]->amount = (float) $row->amount;
 
+			// Set create metadata
 			$vouchers[$key]->authorship->create(
 				new DateTimeImmutable(date('c', $row->created_at)),
 				$row->created_by
 			);
 
-			$vouchers[$key]->expiresAt = new DateTimeImmutable(date('c', $row->expires_at));
-			$vouchers[$key]->usedAt    = new DateTimeImmutable(date('c', $row->used_at));
+			// Cast dates to DateTimeImmutable
+			if ($row->expires_at) {
+				$vouchers[$key]->expiresAt = new DateTimeImmutable(date('c', $row->expires_at));
+			}
 
-			$vouchers[$key]->purchasedAsItem = $this->_itemLoader->getByID($row->purchased_as_item_id);
+			if ($row->used_at) {
+				$vouchers[$key]->usedAt = new DateTimeImmutable(date('c', $row->used_at));
+			}
 
-			$vouchers[$key]->usage = $this->_paymentLoader->getByTypeAndReference('voucher', $row->id);
+			// Get the item the voucher was purchased as
+			if ($row->purchased_as_item_id) {
+				$vouchers[$key]->purchasedAsItem = $this->_itemLoader->getByID($row->purchased_as_item_id);
+			}
+
+			// Get order payments where this voucher was used
+			$payments = $this->_paymentLoader->getByMethodAndReference('voucher', $row->id);
+
+			// Ensure the payments are in an array
+			if (!is_array($payments)) {
+				$payments = array($payments);
+			}
+
+			// Set the payments as the usage for the voucher
+			foreach ($payments as $payment) {
+				if ($payment instanceof Payment) {
+					$vouchers[$key]->usage[] = $payment;
+				}
+			}
 
 			$return[$row->id] = $vouchers[$key];
 		}
