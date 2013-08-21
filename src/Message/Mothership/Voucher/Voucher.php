@@ -57,4 +57,14 @@ class Voucher
 	{
 		return $this->amount - $this->getAmountUsed();
 	}
+
+	/**
+	 * check whether the voucher is allowed to be applied to an order.
+	 *
+	 * @return boolean  Check whether the voucher hasn't expired and has a positive balance
+	 */
+	public function isUsable()
+	{
+		return $this->getBalance() > 0 && $this->expiresAt->getTimestamp() > time();
+	}
 }
