@@ -31,6 +31,10 @@ class Services implements ServicesInterface
 			return $create;
 		};
 
+		$container['voucher.edit'] = function($c) {
+			return new Voucher\Edit($c['db.query'], $c['user.current']);
+		};
+
 		$container['voucher.id_generator'] = function($c) {
 			return new Voucher\IdGenerator($c['security.salt'], $c['voucher.loader'], $c['cfg']->voucher->idLength);
 		};

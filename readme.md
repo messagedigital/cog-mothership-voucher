@@ -5,8 +5,8 @@ This cogule provides face-value voucher functionality for Mothership commerce sy
 ## Todo
 
 - Implement electronic gift vouchers (products tagged for automatic dispatch?)
+	- event listener to email e-vouchers if purchased (can come later)
 - order assembler things of vouchers being used as "payments" on the prepared order
-- event listener to email e-vouchers if purchased (can come later)
 - SOP needs to somehow let you print the voucher if there is one in the order
 - Offers interface
 	- Create voucher
