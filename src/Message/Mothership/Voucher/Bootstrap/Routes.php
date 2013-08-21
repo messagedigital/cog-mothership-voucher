@@ -10,6 +10,9 @@ class Routes implements RoutesInterface
 	{
 		$router['ms.voucher']->add('ms.voucher.process', '/voucher/add', '::Controller:AddVoucher#voucherProcess');
 
-		return $router;
+		$router['ms.cp.voucher']->setParent('ms.cp')->setPrefix('/voucher');
+
+		$router['ms.cp.voucher']->add('ms.cp.voucher.index', '', '::Controller:ControlPanel#index');
+		$router['ms.cp.voucher']->add('ms.cp.voucher.create', '/create', '::Controller:ControlPanel#create');
 	}
 }

@@ -1,0 +1,38 @@
+{% extends 'Message:Mothership:ControlPanel::_templates:cp' %}
+
+{% block content %}
+<div class="topbar">
+	<h1>Vouchers</h1>
+
+	do a search
+
+	<a href="{{ url('ms.cp.voucher.create')}}" class="button small create" data-live>Add a new voucher</a>
+</div>
+
+<h2>Outstanding vouchers</h2>
+
+{% if vouchers|length == 0 %}
+<p class="notice">{{ 'ms.vouchers.none-outstanding'|trans }}</p>
+{% else %}
+<table>
+	<thead>
+		<th>ID</th>
+		<th>Created at</th>
+		<th>Initial value</th>
+		<th>Balance</th>
+		<th>Expires at</th>
+	</thead>
+	<tbody>
+		{% for voucher in vouchers %}
+		<tr>
+			<td>{{ voucher.id }}</td>
+			<td>{{ voucher.authorship.createdAt|date('h:ia \\o\\n d/m/y') }}</td>
+			<td>{{ voucher.amount }}</td>
+			<td>{{ voucher.getBalance() }}</td>
+			<td>{{ voucher.expiresAt is empty ? 'No expiry' : voucher.expiresAt|date('h:ia \\o\\n d/m/y') }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endif %}
+{% endblock %}

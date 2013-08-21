@@ -32,6 +32,27 @@ class Loader
 		return $this->_load($id, false);
 	}
 
+	/**
+	 * Get outstanding vouchers (vouchers that are not fully used and have not
+	 * expired).
+	 *
+	 * @return array[Voucher] Outstanding vouchers
+	 */
+	public function getOutstanding()
+	{
+		$result = $this->_query->run('
+			SELECT
+				voucher_id
+			FROM
+				voucher
+			WHERE
+				used_at IS NULL
+			AND (expires_at IS NULL OR expires_at > UNIX_TIMESTAMP())
+		');
+
+		return $this->_load($result->flatten(), true);
+	}
+
 	public function _load($ids, $alwaysReturnArray = false)
 	{
 		if (!is_array($ids)) {
