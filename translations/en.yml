@@ -1,2 +1,15 @@
-ms.vouchers:
+ms.voucher:
   none-outstanding: There are no outstanding vouchers.
+  voucher-not-found: Voucher '%id%' does not exist.
+  voucher-no-usage: This voucher has not been used yet.
+  id:
+    label: Voucher ID
+    search-placeholder: Enter voucher ID…
+  amount:
+    label: Voucher amount
+    help:
+      short: The value of this voucher that can be redeemed.
+  expiry:
+    label: Expires at
+    help:
+      short: This voucher will not be usable after this date/time.
