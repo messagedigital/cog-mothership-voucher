@@ -28,6 +28,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			Order\Events::CREATE_END => array(
 				array('generateVouchers'),
 			),
+			Order\Events::ASSEMBLER_UPDATE => array(
+				array('recalculateVouchers'),
+			),
 		);
 	}
 
@@ -73,6 +76,30 @@ class EventListener extends BaseListener implements SubscriberInterface
 			$create = $this->get('voucher.create');
 			$create->setTransaction($event->getTransaction());
 			$create->create($voucher);
+		}
+	}
+
+	public function recalculateVouchers()
+	{
+		$order = $this->get('basket')->getOrder();
+
+		foreach ($order->payments as $payment) {
+			if ($payment->method->getName() != 'voucher') {
+				continue;
+			}
+
+			$voucherID = $payment->reference;
+			$order->payments->remove($voucherID);
+			$voucher = $this->get('voucher.loader')->getByID($voucherID);
+			if ($voucher && $voucher->isUsable()) {
+				$paymentMethod = $this->get('order.payment.methods')->get('voucher');
+				if ($this->get('basket')->getOrder()->getPaymentTotal() >= $voucher->getBalance()) {
+					$amount = $voucher->getBalance();
+				} else {
+					$amount = $this->get('basket')->getOrder()->getPaymentTotal();
+				}
+				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id, true);
+			}
 		}
 	}
 }
