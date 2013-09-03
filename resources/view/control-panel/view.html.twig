@@ -1,64 +1,86 @@
-{% extends 'Message:Mothership:ControlPanel::_templates:cp' %}
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
-{% block content %}
-<div class="topbar">
+{% block sidebar %}
+		<a href="{{ url('ms.cp.voucher.index') }}" class="back">Back to vouchers</a>
+{% endblock %}
+
+{% block main %}
+
+<div class="title vouchers">
 	<h1>Voucher '{{ voucher.id }}'</h1>
-
-	invalidate the voucher
+	
+	<div class="controls">
+		<a href="#" class="button small invalidate">Invalidate Voucher</a>
+	</div>
 </div>
+<div class="container-content">
 
-<dl class="details">
-	<dt>{{ 'ms.voucher.id.label'|trans }}</dt>
-		<dd>{{ voucher.id }}</dd>
 
-	<dt>{{ 'ms.voucher.amount.label'|trans }}</dt>
-		<dd>{{ voucher.amount|price(voucher.currencyID) }}</dd>
+<section class="repeatable-group">
+	<div class="container">
+	<section class="group">
+			<h2 class="title">Voucher details</h2>
+			<ul class="voucher-details col">
+				<li><span>{{ 'ms.voucher.amount.label'|trans }}</span> {{ voucher.amount|price(voucher.currencyID) }}</li>
 
-	<dt>{{ 'ms.voucher.used-amount.label'|trans }}</dt>
-		<dd>{{ voucher.getAmountUsed()|price(voucher.currencyID) }}</dd>
+				<li><span>{{ 'ms.voucher.used-amount.label'|trans }}</span> {{ voucher.getAmountUsed()|price(voucher.currencyID) }}</li>
 
-	<dt>{{ 'ms.voucher.balance.label'|trans }}</dt>
-		<dd>{{ voucher.getBalance()|price(voucher.currencyID) }}</dd>
+				<li class="grand-total"><span>{{ 'ms.voucher.balance.label'|trans }}</span> {{ voucher.getBalance()|price(voucher.currencyID) }}</li>
 
-	<dt>{{ 'Created at'|trans }}</dt>
-		<dd>{{ voucher.authorship.createdAt|date('h:ia \\o\\n d/m/y') }} by {{ voucher.authorship.createdBy }}</dd>
+			</ul>
 
-	{% if voucher.purchasedAsItem is not empty %}
-	<dt>{{ 'ms.voucher.purchased-as-order.label'|trans }}</dt>
-		<dd><a href="{{ url('ms.commerce.order.detail.view.items', {orderID: voucher.purchasedAsItem.order.id}) }}">#{{ voucher.purchasedAsItem.order.id }}</a></dd>
-	{% endif %}
+			<ul class="voucher-details col">
 
-	{% if voucher.usedAt is not empty %}
-	<dt>{{ 'ms.voucher.used-at.label'|trans }}</dt>
-		<dd>{{ voucher.usedAt|date('h:ia \\o\\n d/m/y') }}</dd>
-	{% endif %}
-</dl>
+				<li><span>Expiry on</span> {{ voucher.expiresAt|date}}</li>
+				
+				<li><span>{{ 'Created at'|trans }}</span> {{ voucher.authorship.createdAt|date}} </li>
 
-<h2>Usage history</h2>
+				<li><span>{{ 'Created by'|trans }}</span> {{ voucher.authorship.createdBy }}</li>
 
-{% if voucher.usage is empty %}
-<p class="notice">{{ 'ms.voucher.voucher-no-usage'|trans }}</p>
-{% else %}
-<table>
-	<thead>
-		<tr>
-			<th>Order</th>
-			<th>Customer</th>
-			<th>Order total</th>
-			<th>Amount used</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for payment in voucher.usage %}
-		<tr>
-			<td><a href="{{ url('ms.commerce.order.detail.view.index', {orderID: payment.order.id}) }}">#{{ payment.order.id }}</a></td>
-			<td>{{ payment.order.user.getName }}</td>
-			<td>{{ payment.order.totalGross|price(payment.order.currencyID) }}</td>
-			<td>{{ payment.amount|price(payment.order.currencyID) }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
-{% endif %}
+				{% if voucher.purchasedAsItem is not empty %}
+				<li><span>{{ 'ms.voucher.purchased-as-order.label'|trans }}</span> <a href="{{ url('ms.commerce.order.detail.view.items', {orderID: voucher.purchasedAsItem.order.id}) }}">#{{ voucher.purchasedAsItem.order.id }}</a></li>
+				{% endif %}
+
+				{% if voucher.usedAt is not empty %}
+				<li><span>{{ 'ms.voucher.used-at.label'|trans }}</span> {{ voucher.usedAt|date('h:ia \\o\\n d/m/y') }}</li>
+				{% endif %}
+			</ul>
+		</section>
+		</div>
+	</section>
+
+		<h2>Usage history</h2>
+
+		{% if voucher.usage is empty %}
+		
+		<p class="notice">{{ 'ms.voucher.voucher-no-usage'|trans }}</p>
+		
+		{% else %}
+
+		<table>
+			<thead>
+				<tr>
+					<th>Order</th>
+					<th>Customer</th>
+					<th>Order total</th>
+					<th>Amount used</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for payment in voucher.usage %}
+				<tr>
+					<td><a href="{{ url('ms.commerce.order.detail.view.index', {orderID: payment.order.id}) }}">#{{ payment.order.id }}</a></td>
+					<td>{{ payment.order.user.getName }}</td>
+					<td>{{ payment.order.totalGross|price(payment.order.currencyID) }}</td>
+					<td>{{ payment.amount|price(payment.order.currencyID) }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		
+		{% endif %}
+
+	</div>
+
 
 {% endblock %}

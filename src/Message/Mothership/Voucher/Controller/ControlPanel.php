@@ -88,7 +88,7 @@ class ControlPanel extends Controller
 			->setMethod('POST')
 			->setAction($this->generateUrl('ms.cp.voucher.search'));
 
-		$searchForm->add('id', 'text', $this->trans('ms.voucher.id.label'), array(
+		$searchForm->add('id', 'search', $this->trans('ms.voucher.id.label'), array(
 			'attr' => array(
 				'placeholder' => $this->trans('ms.voucher.id.search-placeholder'),
 			),

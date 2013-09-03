@@ -1,43 +1,51 @@
-{% extends 'Message:Mothership:ControlPanel::_templates:cp' %}
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
-{% block content %}
-<div class="topbar">
-	<h1>Vouchers</h1>
-
+{% block sidebar %}
+	<div class="search files">
 	{{ form_start(searchForm) }}
-	{{ form_widget(searchForm.id) }}
-	<button type="submit" class="button small">Find voucher</button>
+		<div class="field">
+			{{ form_row(searchForm.id, { 'attr': {'placeholder': 'Enter voucher ID...' } }) }}
+		</div>
+		<button type="submit">Find voucher</button>
 	{{ form_end(searchForm) }}
+	</div>
 
-	<a href="{{ url('ms.cp.voucher.create')}}" class="button small create" data-live>Add a new voucher</a>
-</div>
+	<a href="{{ url('ms.cp.voucher.create')}}" class="button create" data-live>Add a new voucher</a>
+{% endblock %}
 
-<h2>Outstanding vouchers</h2>
+{% block main %}
+	<div class="title vouchers">
+		<h1>Vouchers</h1>
+	</div>
 
-{% if vouchers|length == 0 %}
-<p class="notice">{{ 'ms.voucher.none-outstanding'|trans }}</p>
-{% else %}
-<table>
-	<thead>
-		<tr>
-			<th>ID</th>
-			<th>Created at</th>
-			<th>Initial value</th>
-			<th>Balance</th>
-			<th>Expires at</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for voucher in vouchers %}
-		<tr>
-			<td>{{ voucher.id }}</td>
-			<td>{{ voucher.authorship.createdAt|date('h:ia \\o\\n d/m/y') }}</td>
-			<td>{{ voucher.amount|price(voucher.currencyID) }}</td>
-			<td>{{ voucher.getBalance()|price(voucher.currencyID) }}</td>
-			<td>{{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date('h:ia \\o\\n d/m/y') }}</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
-{% endif %}
+	<div class="container-content extended vouchers">
+		<h2>Outstanding vouchers</h2>
+
+		{% if vouchers|length == 0 %}
+		<p class="notice">{{ 'ms.voucher.none-outstanding'|trans }}</p>
+		{% else %}
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Created at</th>
+					<th>Initial value</th>
+					<th>Balance</th>
+					<th>Expires at</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for voucher in vouchers %}
+				<tr>
+					<td><a href="{{ url('ms.cp.voucher.view', {id : voucher.id}) }}">{{ voucher.id }}</a></td>
+					<td>{{ voucher.authorship.createdAt|date('h:ia \\o\\n d/m/y') }}</td>
+					<td>{{ voucher.amount|price(voucher.currencyID) }}</td>
+					<td>{{ voucher.getBalance()|price(voucher.currencyID) }}</td>
+					<td>{{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date('h:ia \\o\\n d/m/y') }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% endif %}
 {% endblock %}
