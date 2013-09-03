@@ -37,10 +37,10 @@ class AddVoucher extends Controller
 
 				$paymentMethod = $this->get('order.payment.methods')->get('voucher');
 
-				if ($this->get('basket')->getOrder()->getPaymentTotal() >= $voucher->getBalance()) {
+				if ($this->get('basket')->getOrder()->getAmountDue() >= $voucher->getBalance()) {
 					$amount = $voucher->getBalance();
 				} else {
-					$amount = $this->get('basket')->getOrder()->getPaymentTotal();
+					$amount = $this->get('basket')->getOrder()->getAmountDue();
 				}
 				$this->addFlash('success', 'Voucher applied to order successfully');
 				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id);

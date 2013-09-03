@@ -93,10 +93,10 @@ class EventListener extends BaseListener implements SubscriberInterface
 			$voucher = $this->get('voucher.loader')->getByID($voucherID);
 			if ($voucher && $voucher->isUsable()) {
 				$paymentMethod = $this->get('order.payment.methods')->get('voucher');
-				if ($this->get('basket')->getOrder()->getPaymentTotal() >= $voucher->getBalance()) {
+				if ($this->get('basket')->getOrder()->getAmountDue() >= $voucher->getBalance()) {
 					$amount = $voucher->getBalance();
 				} else {
-					$amount = $this->get('basket')->getOrder()->getPaymentTotal();
+					$amount = $this->get('basket')->getOrder()->getAmountDue();
 				}
 				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id, true);
 			}
