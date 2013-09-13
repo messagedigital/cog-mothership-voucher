@@ -8,18 +8,19 @@
 
 <div class="title vouchers">
 	<h1>Voucher '{{ voucher.id }}'</h1>
-	
+
 	<div class="controls">
 		<a href="#" class="button small invalidate">Invalidate Voucher</a>
 	</div>
 </div>
-<div class="container-content">
+<div class="container-content extended dual-column">
 
 
-	<div class="container">
-		<section class="group">
-			<h2 class="title">Voucher details</h2>
-			<ul class="voucher-details col">
+	<div class="column">
+
+
+			<h2>Amount Details</h2>
+			<ul class="voucher-details">
 				<li><span>{{ 'ms.voucher.amount.label'|trans }}</span> {{ voucher.amount|price(voucher.currencyID) }}</li>
 
 				<li><span>{{ 'ms.voucher.used-amount.label'|trans }}</span> {{ voucher.getAmountUsed()|price(voucher.currencyID) }}</li>
@@ -28,10 +29,11 @@
 
 			</ul>
 
-			<ul class="voucher-details col">
+			<h2>Voucher Details</h2>
+			<ul class="voucher-details">
 
 				<li><span>Expiry on</span> {{ voucher.expiresAt|date}}</li>
-				
+
 				<li><span>{{ 'Created at'|trans }}</span> {{ voucher.authorship.createdAt|date}} </li>
 
 				<li><span>{{ 'Created by'|trans }}</span> {{ voucher.authorship.createdBy }}</li>
@@ -44,16 +46,16 @@
 				<li><span>{{ 'ms.voucher.used-at.label'|trans }}</span> {{ voucher.usedAt|date('h:ia \\o\\n d/m/y') }}</li>
 				{% endif %}
 			</ul>
-		</section>
+
 	</div>
 
-
+ <div class="column">
 		<h2>Usage history</h2>
 
 		{% if voucher.usage is empty %}
-		
+
 		<p class="notice">{{ 'ms.voucher.voucher-no-usage'|trans }}</p>
-		
+
 		{% else %}
 
 		<table>
@@ -76,10 +78,10 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		
+
 		{% endif %}
 
 	</div>
-
+</div>
 
 {% endblock %}
