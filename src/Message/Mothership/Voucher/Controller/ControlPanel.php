@@ -11,7 +11,13 @@ class ControlPanel extends Controller
 	public function index()
 	{
 		return $this->render('::control-panel:index', array(
-			'vouchers'   => $this->get('voucher.loader')->getOutstanding(),
+			'vouchers' => $this->get('voucher.loader')->getOutstanding(),
+		));
+	}
+
+	public function sidebar()
+	{
+		return $this->render('Message:Mothership:Voucher::control-panel:sidebar', array(
 			'searchForm' => $this->_getSearchForm(),
 		));
 	}

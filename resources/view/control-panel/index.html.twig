@@ -1,16 +1,7 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
 {% block sidebar %}
-	<div class="search files">
-	{{ form_start(searchForm) }}
-		<div class="field">
-			{{ form_row(searchForm.id, { 'attr': {'placeholder': 'Enter voucher ID...' } }) }}
-		</div>
-		<button type="submit">Find voucher</button>
-	{{ form_end(searchForm) }}
-	</div>
-
-	<a href="{{ url('ms.cp.voucher.create')}}" class="button create" data-live>Add a new voucher</a>
+	{{ render(controller('Message:Mothership:Voucher::Controller:ControlPanel#sidebar')) }}
 {% endblock %}
 
 {% block main %}
