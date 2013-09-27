@@ -7,7 +7,7 @@ class _1379342457_SetUp extends Migration
 	public function up()
 	{
 		$this->run("
-			CREATE TABLE `voucher` (
+			CREATE TABLE IF NOT EXISTS `voucher` (
 			  `voucher_id` varchar(30) NOT NULL DEFAULT '',
 			  `created_at` int(11) unsigned NOT NULL,
 			  `created_by` int(11) unsigned DEFAULT NULL,
