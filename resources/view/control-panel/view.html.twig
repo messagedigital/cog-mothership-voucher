@@ -15,9 +15,7 @@
 </div>
 <div class="container-content extended dual-column">
 
-
 	<div class="column">
-
 
 			<h2>Amount Details</h2>
 			<ul class="voucher-details">
@@ -32,7 +30,7 @@
 			<h2>Voucher Details</h2>
 			<ul class="voucher-details">
 
-				<li><span>Expiry on</span> {{ voucher.expiresAt|date}}</li>
+				<li><span>Expiry on</span> {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date('h:ia \\o\\n d/m/y') }}</li>
 
 				<li><span>{{ 'Created at'|trans }}</span> {{ voucher.authorship.createdAt|date}} </li>
 

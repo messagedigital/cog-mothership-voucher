@@ -13,3 +13,7 @@ ms.voucher:
     label: Expires at
     help:
       short: This voucher will not be usable after this date/time.
+  used-amount:
+    label: Amount used
+  balance:
+    label: Balance
