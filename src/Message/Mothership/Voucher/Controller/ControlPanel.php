@@ -111,10 +111,18 @@ class ControlPanel extends Controller
 			->setMethod('POST')
 			->setAction($this->generateUrl('ms.cp.voucher.create.action'));
 
-		$form->add('amount', 'number', $this->trans('ms.voucher.amount.label'), array(
-			'precision' => 2,
-			'attr'      => array('data-help-key' => 'ms.voucher.amount.help')
-		));
+		$form->add(
+			'amount',
+			'money',
+			$this->trans('ms.voucher.amount.label'),
+			array(
+				'currency' => 'GBP',
+				'precision' => 2,
+				'attr'     => array(
+					'data-help-key' => 'ms.voucher.amount.help',
+				)
+			)
+		);
 
 		$form->add('expiry', 'datetime', $this->trans('ms.voucher.expiry.label'), array(
 			'attr' => array('data-help-key' => 'ms.voucher.expiry.help')
