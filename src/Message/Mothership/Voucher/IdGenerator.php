@@ -42,8 +42,12 @@ class IdGenerator
 			$id = strtoupper($id);
 			$id = preg_replace('/[^A-Z0-9]/', '', $id);
 
-			if (!$this->_idExists($id)) {
-				break;
+			if ($this->_length == strlen($id)) {
+
+				if (!$this->_idExists($id)) {
+					break;
+				}
+
 			}
 		}
 
