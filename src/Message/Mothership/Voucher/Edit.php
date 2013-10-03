@@ -57,7 +57,7 @@ class Edit implements DB\TransactionalInterface
 		}
 
 		if ($used > new \DateTime) {
-			throw new \InvalidArgumentException(sprintf('Cannot set voucher used date in the future for voucher `%s`', $voucher->id);
+			throw new \InvalidArgumentException(sprintf('Cannot set voucher used date in the future for voucher `%s`', $voucher->id));
 		}
 
 		$voucher->usedAt = $used;
@@ -68,7 +68,7 @@ class Edit implements DB\TransactionalInterface
 			SET
 				used_at = ?d
 			WHERE
-				id = ?s
+				voucher_id = ?s
 		', array($used, $voucher->id));
 
 		return $voucher;
@@ -92,7 +92,7 @@ class Edit implements DB\TransactionalInterface
 			SET
 				expires_at = ?d
 			WHERE
-				id = ?s
+				voucher_id = ?s
 		', array($expiry, $voucher->id));
 
 		return $voucher;

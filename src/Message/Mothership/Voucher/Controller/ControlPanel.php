@@ -87,6 +87,17 @@ class ControlPanel extends Controller
 		return $this->redirectToReferer();
 	}
 
+	public function invalidate($id)
+	{
+		$voucher = $this->get('voucher.loader')->getByID($id);
+
+		$this->get('voucher.edit')->setExpiry($voucher, new \DateTime);
+
+		$this->addFlash('success', $this->trans('ms.voucher.voucher-invalidated'));
+
+		return $this->redirectToReferer();
+	}
+
 	protected function _getSearchForm()
 	{
 		$searchForm = $this->get('form')

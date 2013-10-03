@@ -19,6 +19,10 @@ class Routes implements RoutesInterface
 		$router['ms.cp.voucher']->add('ms.cp.voucher.search', '/search', '::Controller:ControlPanel#search')
 			->setMethod('POST');
 
+		$router['ms.cp.voucher']->add('ms.cp.voucher.invalidate', '/{id}/invalidate', '::Controller:ControlPanel#invalidate')
+			->setRequirement('id', '[A-Z0-9]+')
+			->setMethod('DELETE');
+
 		$router['ms.cp.voucher']->add('ms.cp.voucher.view', '/{id}', '::Controller:ControlPanel#view');
 	}
 }

@@ -10,7 +10,11 @@
 	<h1>Voucher '{{ voucher.id }}'</h1>
 
 	<div class="controls">
-		<a href="#" class="button small invalidate">Invalidate Voucher</a>
+	    <form action="{{ url('ms.cp.voucher.invalidate', {id: voucher.id}) }}" method="post" id="delete-page">
+	        <input type="hidden" name="_method" value="DELETE">
+	        <button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Invalidate Voucher'|trans }}</button>
+	    </form>
+
 	</div>
 </div>
 <div class="container-content extended dual-column">
@@ -30,18 +34,18 @@
 			<h2>Voucher Details</h2>
 			<ul class="voucher-details">
 
-				<li><span>Expiry on</span> {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date('h:ia \\o\\n d/m/y') }}</li>
+				<li><span>Expiry on</span> {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}</li>
 
 				<li><span>{{ 'Created at'|trans }}</span> {{ voucher.authorship.createdAt|date}} </li>
 
-				<li><span>{{ 'Created by'|trans }}</span> {{ voucher.authorship.createdBy }}</li>
+				<li><span>{{ 'Created by'|trans }}</span> {{ voucher.authorship.createdUser.name }}</li>
 
 				{% if voucher.purchasedAsItem is not empty %}
 				<li><span>{{ 'ms.voucher.purchased-as-order.label'|trans }}</span> <a href="{{ url('ms.commerce.order.detail.view.items', {orderID: voucher.purchasedAsItem.order.id}) }}">#{{ voucher.purchasedAsItem.order.id }}</a></li>
 				{% endif %}
 
 				{% if voucher.usedAt is not empty %}
-				<li><span>{{ 'ms.voucher.used-at.label'|trans }}</span> {{ voucher.usedAt|date('h:ia \\o\\n d/m/y') }}</li>
+				<li><span>{{ 'ms.voucher.used-at.label'|trans }}</span> {{ voucher.usedAt|date }}</li>
 				{% endif %}
 			</ul>
 

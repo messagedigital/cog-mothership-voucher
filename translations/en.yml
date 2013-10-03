@@ -2,6 +2,7 @@ ms.voucher:
   none-outstanding: There are no outstanding vouchers.
   voucher-not-found: Voucher '%id%' does not exist.
   voucher-no-usage: This voucher has not been used yet.
+  voucher-invalidated: This voucher has been invalidated.
   id:
     label: Voucher ID
     search-placeholder: Enter voucher ID…
