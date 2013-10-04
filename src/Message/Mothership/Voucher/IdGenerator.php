@@ -2,7 +2,7 @@
 
 namespace Message\Mothership\Voucher;
 
-use Message\Cog\Security\Salt;
+use Message\Cog\Security\StringGenerator;
 
 /**
  * Generates IDs that can be used by a new voucher.
@@ -22,7 +22,7 @@ class IdGenerator
 	 * @param Loader $loader          Voucher loader
 	 * @param int    $length          String length of voucher IDs
 	 */
-	public function __construct(Salt $stringGenerator, Loader $loader, $length)
+	public function __construct(StringGenerator $stringGenerator, Loader $loader, $length)
 	{
 		$this->_stringGenerator = $stringGenerator;
 		$this->_loader          = $loader;
@@ -39,15 +39,8 @@ class IdGenerator
 	{
 		while (1) {
 			$id = $this->_stringGenerator->generate($this->_length);
-			$id = strtoupper($id);
-			$id = preg_replace('/[^A-Z0-9]/', '', $id);
-
-			if ($this->_length == strlen($id)) {
-
-				if (!$this->_idExists($id)) {
-					break;
-				}
-
+			if (!$this->_idExists($id)) {
+				break;
 			}
 		}
 
