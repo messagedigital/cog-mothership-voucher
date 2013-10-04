@@ -3,9 +3,21 @@
 namespace Message\Mothership\Voucher\Task\Porting;
 
 use Message\Cog\Console\Task\Task;
+use Symfony\Component\Console\Input\InputArgument;
+use Message\Cog\DB\Adapter\MySQLi\Connection;
 
 class Voucher extends Task
 {
+
+	protected function configure()
+	{
+		$this
+			->addArgument(
+				'old',
+				InputArgument::REQUIRED,
+				'please pass in the name of the service as the last parameter'
+			);
+	}
 
 	/**
 	 * Gets the DB connection to port the data from
@@ -14,13 +26,14 @@ class Voucher extends Task
 	 */
 	public function getFromConnection()
 	{
-        return new \Message\Cog\DB\Adapter\MySQLi\Connection(array(
-				'host'		=> '192.168.201.99',
-				'user'		=> 'danny',
-				'password' 	=> 'chelsea',
-				'db'		=> 'uniform_wares',
-				'charset'	=> 'utf-8',
-		));
+		$serviceName = $this->getRawInput()->getArgument('old');
+		$service = $this->get($serviceName);
+
+		if (!$service instanceof Connection) {
+			throw new \Exception('service must be instance of Message\Cog\DB\Adapter\MySQLi\Connection');
+		}
+
+		return $service;
 	}
 
 	/**
@@ -30,12 +43,11 @@ class Voucher extends Task
 	 */
 	public function getToConnection()
 	{
-
 		return new \Message\Cog\DB\Adapter\MySQLi\Connection(array(
-				'host'		=> '192.168.201.99',
-				'user'		=> 'danny',
-				'password' 	=> 'chelsea',
-				'db'		=> 'mothership_cms',
+				'host'		=> $this->get('cfg')->db->hostname,
+				'user'		=> $this->get('cfg')->db->user,
+				'password' 	=> $this->get('cfg')->db->pass,
+				'db'		=> $this->get('cfg')->db->name,
 				'charset'	=> 'utf-8',
 		));
 	}
