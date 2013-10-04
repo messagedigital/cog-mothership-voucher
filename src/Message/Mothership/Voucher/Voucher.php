@@ -65,6 +65,6 @@ class Voucher
 	 */
 	public function isUsable()
 	{
-		return $this->getBalance() > 0 && $this->expiresAt->getTimestamp() > time();
+		return $this->getBalance() > 0 && (is_null($this->expiresAt) || $this->expiresAt->getTimestamp() > time());
 	}
 }
