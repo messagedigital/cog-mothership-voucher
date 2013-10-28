@@ -25,7 +25,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			Order\Events::CREATE_END => array(
+			Order\Entity\Item\Events::CREATE_PRE_PERSONALISATION_INSERTS => array(
 				array('generateVouchers'),
 			),
 			Order\Events::ASSEMBLER_UPDATE => array(
@@ -35,7 +35,8 @@ class EventListener extends BaseListener implements SubscriberInterface
 	}
 
 	/**
-	 * Generate vouchers for any item in a new order that is a voucher product.
+	 * Generate vouchers for any items added to an order that are voucher
+	 * products.
 	 *
 	 * The product ID for the item must be listed in the "product-ids" config
 	 * element in the "voucher" group.
@@ -43,13 +44,22 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 * The voucher amount is set to the *list price* of the item, not the net
 	 * or gross amount.
 	 *
-	 * The queries for adding the voucher are added to the same transaction as
-	 * the order creation queries.
+	 * The voucher ID is then set as the personalisation key "voucher_id" on the
+	 * relevant item.
 	 *
-	 * @param Order\Event\TransactionalEvent $event The event object
+	 * The queries for adding the voucher are added to the same transaction as
+	 * the item creation queries.
+	 *
+	 * @param Order\Event\EntityEvent $event The event object
 	 */
-	public function generateVouchers(Order\Event\TransactionalEvent $event)
+	public function generateVouchers(Order\Event\EntityEvent $event)
 	{
+		$item = $event->getEntity();
+
+		if (!($item instanceof Order\Entity\Item\Item)) {
+			return false;
+		}
+
 		$voucherProductIDs = $this->get('cfg')->voucher->productIDs;
 
 		// Skip if no voucher product IDs are defined in the config
@@ -62,21 +72,21 @@ class EventListener extends BaseListener implements SubscriberInterface
 			$voucherProductIDs = array($voucherProductIDs);
 		}
 
-		foreach ($event->getOrder()->items as $item) {
-			if (!in_array($item->productID, $voucherProductIDs)) {
-				continue;
-			}
-
-			$voucher = new Voucher;
-			$voucher->currencyID      = $event->getOrder()->currencyID;
-			$voucher->amount          = $item->listPrice;
-			$voucher->id              = $this->get('voucher.id_generator')->generate();
-			$voucher->purchasedAsItem = $item;
-
-			$create = $this->get('voucher.create');
-			$create->setTransaction($event->getTransaction());
-			$create->create($voucher);
+		if (!in_array($item->productID, $voucherProductIDs)) {
+			return false;
 		}
+
+		$voucher = new Voucher;
+		$voucher->currencyID      = $item->order->currencyID;
+		$voucher->amount          = $item->listPrice;
+		$voucher->id              = $this->get('voucher.id_generator')->generate();
+		$voucher->purchasedAsItem = $item;
+
+		$create = $this->get('voucher.create');
+		$create->setTransaction($event->getTransaction());
+		$create->create($voucher);
+
+		$item->personalisation->voucher_id = $voucher->id;
 	}
 
 	public function recalculateVouchers()
