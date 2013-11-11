@@ -23,7 +23,7 @@ class AddVoucher extends Controller
 		$form->setName('voucher_form')
 			->setAction($this->generateUrl('ms.voucher.process'))
 			->setMethod('post');
-		$form->add('voucher', 'text', 'I have a gift voucher');
+		$form->add('voucher', 'text', $this->trans('ms.voucher.add.add'));
 
 		return $form;
 	}
@@ -42,13 +42,13 @@ class AddVoucher extends Controller
 				} else {
 					$amount = $this->get('basket')->getOrder()->getAmountDue();
 				}
-				$this->addFlash('success', 'Voucher applied to order successfully');
+				$this->addFlash('success', $this->trans('ms.voucher.add.success'));
 				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id);
 			} else {
-				$this->addFlash('error', 'Voucher could not be applied to order');
+				$this->addFlash('error', $this->trans('ms.voucher.add.error.unusable'));
 			}
 		} else {
-			$this->addFlash('error', 'Please enter a valid gift voucher code');
+			$this->addFlash('error', $this->trans('ms.voucher.add.error.invalid'));
 		}
 
 		return $this->redirectToReferer();
