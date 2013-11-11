@@ -23,7 +23,7 @@ class AddVoucher extends Controller
 		$form->setName('voucher_form')
 			->setAction($this->generateUrl('ms.voucher.process'))
 			->setMethod('post');
-		$form->add('voucher', 'text', $this->trans('ms.voucher.add.add'));
+		$form->add('voucher', 'text', $this->trans('ms.voucher.add.label'));
 
 		return $form;
 	}
