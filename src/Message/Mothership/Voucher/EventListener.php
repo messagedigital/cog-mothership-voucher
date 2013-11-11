@@ -28,6 +28,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			Order\Entity\Item\Events::CREATE_PRE_PERSONALISATION_INSERTS => array(
 				array('generateVouchers'),
 			),
+			Order\Events::CREATE_END => array(
+				array('setUsedTimestamp'),
+			),
 			Order\Events::ASSEMBLER_UPDATE => array(
 				array('recalculateVouchers'),
 			),
@@ -87,6 +90,45 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$create->create($voucher);
 
 		$item->personalisation->voucher_id = $voucher->id;
+	}
+
+	/**
+	 * Sets the "used" timestamp on vouchers that have been used on an order,
+	 * only when the voucher has now been used up entirely.
+	 *
+	 * The timestamp is set to the "created at" timestamp for the order.
+	 *
+	 * @param Order\Event\TransactionalEvent $event
+	 */
+	public function setUsedTimestamp(Order\Event\TransactionalEvent $event)
+	{
+		$order         = $event->getOrder();
+		$voucherLoader = $this->get('voucher.loader');
+		$voucherEdit   = $this->get('voucher.edit');
+
+		// Set voucher edit decorator to use the transaction from the event
+		$voucherEdit->setTransaction($event->getTransaction());
+
+		foreach ($order->payments as $payment) {
+			// Skip if the payment isn't a voucher payment
+			if ('voucher' !== $payment->method->getName()) {
+				continue;
+			}
+
+			$voucher = $voucherLoader->getByID($payment->reference);
+
+			// Skip if the voucher could not be found
+			if (!($voucher instanceof Voucher)) {
+				continue;
+			}
+
+			// Skip if the voucher wasn't fully used
+			if ($payment->amount != $voucher->getBalance()) {
+				continue;
+			}
+
+			$voucherEdit->setUsed($voucher, $order->authorship->createdAt());
+		}
 	}
 
 	public function recalculateVouchers()
