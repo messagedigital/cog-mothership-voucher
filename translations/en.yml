@@ -18,3 +18,9 @@ ms.voucher:
     label: Amount used
   balance:
     label: Balance
+  add:
+    label: I have a gift voucher
+    success: Voucher applied to order successfully
+    error:
+      unusable: Voucher could not be applied to order
+      invalid: Please enter a valid gift voucher code
