@@ -3,6 +3,7 @@
 	"description": "Cog module for face-value vouchers functionality for Mothership Commerce",
 	"keywords": ["commerce", "mothership", "voucher", "credit note", "gift voucher", "money", "cog"],
 	"homepage": "http://message.co.uk",
+	"license": "proprietary",
 	"authors": [
 		{
 			"name" : "The Message Development Team",
@@ -28,7 +29,7 @@
 	"require": {
 		"php": ">=5.3.0",
 
-		"message/cog-mothership-commerce": "1.0.*"
+		"message/cog-mothership-commerce": "1.*"
 	},
 	"suggest": {
 	},
