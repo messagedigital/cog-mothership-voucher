@@ -1,19 +1,17 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
 {% block sidebar %}
 	{{ render(controller('Message:Mothership:Voucher::Controller:ControlPanel#sidebar')) }}
 {% endblock %}
-
 {% block main %}
 	{{ form_start(form, { 'attr': {'class': 'create-voucher'} }) }}
 		<div class="title">
-			<h1>Create a new voucher</h1>
+			<h1>Create new voucher</h1>
 			<div class="controls">
 				<button type="submit" class="button save small">Create voucher</button>
 			</div>
 		</div>
 		<div class="container-content">
-				{{ form_rest(form) }}
+			{{ form_rest(form) }}
 		</div>
 	{{ form_end(form) }}
 {% endblock %}

@@ -1,17 +1,12 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
 {% block sidebar %}
 	{{ render(controller('Message:Mothership:Voucher::Controller:ControlPanel#sidebar')) }}
 {% endblock %}
-
 {% block main %}
 	<div class="title vouchers">
-		<h1>Vouchers</h1>
+		<h1>All Vouchers</h1>
 	</div>
-
 	<div class="container-content extended vouchers">
-		<h2>Outstanding vouchers</h2>
-
 		{% if vouchers|length == 0 %}
 		<p class="notice">{{ 'ms.voucher.none-outstanding'|trans }}</p>
 		{% else %}
