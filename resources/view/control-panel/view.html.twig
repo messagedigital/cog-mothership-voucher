@@ -6,7 +6,7 @@
 
 {% block main %}
 	<div class="title vouchers">
-		<h1>Voucher '{{ voucher.id }}'</h1>
+		<h1>Voucher '{{ voucher.id }}' <span>{{ 'ms.voucher.expiry.label'|trans }} {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}</span></h1>
 		<div class="controls">
 		    <form action="{{ url('ms.cp.voucher.invalidate', {id: voucher.id}) }}" method="post" id="delete-page">
 		        <input type="hidden" name="_method" value="DELETE">
@@ -14,7 +14,7 @@
 		    </form>
 		</div>
 	</div>
-	<div class="container-content">
+	<div class="container-content tall">
 		<div class="group">
 			<h2 class="title">Amount details</h2>
 			<div class="content">
@@ -28,7 +28,7 @@
 					<li class="grand-total">
 						<span>{{ 'ms.voucher.balance.label'|trans }}</span> {{ voucher.getBalance()|price(voucher.currencyID) }}
 					</li>
-				</ul>				
+				</ul>
 			</div>
 		</div>
 		<div class="group">
@@ -46,7 +46,7 @@
 					</li>
 					{% if voucher.purchasedAsItem is not empty %}
 						<li>
-							<span>{{ 'ms.voucher.purchased-as-order.label'|trans }}</span> 
+							<span>{{ 'ms.voucher.purchased-as-order.label'|trans }}</span>
 							<a href="{{ url('ms.commerce.order.detail.view.items', {orderID: voucher.purchasedAsItem.order.id}) }}">#{{ voucher.purchasedAsItem.order.id }}</a>
 						</li>
 					{% endif %}
@@ -55,9 +55,9 @@
 							<span>{{ 'ms.voucher.used-at.label'|trans }}</span> {{ voucher.usedAt|date }}
 						</li>
 					{% endif %}
-				</ul>	
+				</ul>
 			</div>
-		</div>	
+		</div>
 		<h3>Usage history</h3>
 		{% if voucher.usage is empty %}
 			<p class="notice">{{ 'ms.voucher.voucher-no-usage'|trans }}</p>
