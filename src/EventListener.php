@@ -19,6 +19,8 @@ use Message\Cog\Event\EventListener as BaseListener;
  */
 class EventListener extends BaseListener implements SubscriberInterface
 {
+	protected $_busy = false;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -32,7 +34,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 				array('setUsedTimestamp'),
 			),
 			Order\Events::ASSEMBLER_UPDATE => array(
-				array('recalculateVouchers'),
+				array('recalculateVouchers', -1000),
 			),
 		);
 	}
@@ -131,27 +133,80 @@ class EventListener extends BaseListener implements SubscriberInterface
 		}
 	}
 
-	public function recalculateVouchers()
+	public function recalculateVouchers(Order\Event\Event $event)
 	{
-		$order = $this->get('basket')->getOrder();
+		// Don't execute this listener if it's busy (it's already running)
+		if (true === $this->_busy) {
+			return;
+		}
 
-		foreach ($order->payments as $payment) {
-			if ($payment->method->getName() != 'voucher') {
+		// Mark this listener as busy
+		$this->_busy = true;
+
+		$basket        = $this->get('basket');
+		$order         = $basket->getOrder();
+		$method        = $this->get('order.payment.methods')->get('voucher');
+		$voucherLoader = $this->get('voucher.loader');
+		$leftToPay     = $order->totalGross;
+		$vouchers      = [];
+
+		// Grab the vouchers for all voucher payments
+		foreach ($order->payments->getByProperty('method', $method) as $payment) {
+			if (!$voucher = $voucherLoader->getByID($payment->id)) {
 				continue;
 			}
 
-			$voucherID = $payment->reference;
-			$order->payments->remove($voucherID);
-			$voucher = $this->get('voucher.loader')->getByID($voucherID);
-			if ($voucher && $voucher->isUsable()) {
-				$paymentMethod = $this->get('order.payment.methods')->get('voucher');
-				if ($this->get('basket')->getOrder()->getAmountDue() >= $voucher->getBalance()) {
-					$amount = $voucher->getBalance();
-				} else {
-					$amount = $this->get('basket')->getOrder()->getAmountDue();
+			$vouchers[$payment->id] = $voucher;
+		}
+
+		// Sort vouchers by expiry date ascending, then value ascending
+		uasort($vouchers, function($a, $b) {
+			if ($a->expiresAt == $b->expiresAt) {
+				if ($a->getBalance() == $b->getBalance()) {
+					return 0;
 				}
-				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id, true);
+
+				return ($a->getBalance() < $b->getBalance()) ? -1 : 1;
+			}
+
+			return ($a->expiresAt < $b->expiresAt) ? -1 : 1;
+		});
+
+		// Check all the vouchers
+		foreach ($vouchers as $id => $voucher) {
+			$payment = $order->payments->get($voucher->id);
+
+			// If there is nothing left to pay or the voucher isn't usable, remove it
+			if ($leftToPay <= 0
+			 || !$voucher->isUsable()) {
+				$basket->removeEntity('payments', $payment);
+
+				// Prevent further listeners from firing (a new event will be dispatched)
+				$event->stopPropagation();
+
+				// Continue to the next iteration
+				continue;
+			}
+
+			$amount = ($leftToPay >= $voucher->getBalance())
+				? $voucher->getBalance()
+				: $leftToPay;
+
+			// Reduce the amount left to pay by the voucher amount
+			$leftToPay -= $amount;
+
+			// If the amount to use has changed, update the basket
+			if ($amount != $payment->amount) {
+				$payment->amount = $amount;
+
+				$basket->replaceEntity('payments', $payment);
+
+				// Prevent further listeners from firing (a new event will be dispatched)
+				$event->stopPropagation();
 			}
 		}
+
+		// Release this listener
+		$this->_busy = false;
 	}
 }
