@@ -133,7 +133,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 		}
 	}
 
-	public function recalculateVouchers(Order\Event\Event $event)
+	public function recalculateVouchers(Order\Event\AssemblerEvent $event)
 	{
 		// Don't execute this listener if it's busy (it's already running)
 		if (true === $this->_busy) {
@@ -143,7 +143,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 		// Mark this listener as busy
 		$this->_busy = true;
 
-		$basket        = $this->get('basket');
+		$basket        = $event->getAssembler();
 		$order         = $basket->getOrder();
 		$method        = $this->get('order.payment.methods')->get('voucher');
 		$voucherLoader = $this->get('voucher.loader');
