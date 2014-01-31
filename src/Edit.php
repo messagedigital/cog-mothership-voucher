@@ -97,4 +97,28 @@ class Edit implements DB\TransactionalInterface
 
 		return $voucher;
 	}
+
+	/**
+	 * Set the starting date/time for a voucher.
+	 *
+	 * @param Voucher   $voucher   The voucher
+	 * @param \DateTime $startsAt  The start date/time
+	 *
+	 * @return Voucher           The updated voucher
+	 */
+	public function setStartDate(Voucher $voucher, \DateTime $startsAt)
+	{
+		$voucher->startsAt = $startsAt;
+
+		$this->_query->run('
+			UPDATE
+				voucher
+			SET
+				starts_at = ?d
+			WHERE
+				voucher_id = ?s
+		', array($expiry, $voucher->id));
+
+		return $voucher;
+	}
 }

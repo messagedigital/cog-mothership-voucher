@@ -10,6 +10,10 @@ ms.voucher:
     label: Voucher amount
     help:
       short: The value of this voucher that can be redeemed.
+  starts:
+    label: Starts on
+    help:
+      short: This voucher will not be usable before this date/time.
   expiry:
     label: Expires on
     help:

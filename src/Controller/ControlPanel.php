@@ -79,6 +79,10 @@ class ControlPanel extends Controller
 				$voucher->expiresAt = $expiry;
 			}
 
+			if ($startsAt = $data['startsAt']) {
+				$voucher->startsAt = $startsAt;
+			}
+
 			$voucher = $this->get('voucher.create')->create($voucher);
 
 			return $this->redirectToRoute('ms.cp.voucher.view', array('id' => $voucher->id));
@@ -135,12 +139,19 @@ class ControlPanel extends Controller
 			)
 		);
 
+		$form->add('startsAt', 'datetime', $this->trans('ms.voucher.starts.label'), array(
+			'attr' => array('data-help-key' => 'ms.voucher.starts.help')
+		))->val()
+			->optional();
+
 		$form->add('expiry', 'datetime', $this->trans('ms.voucher.expiry.label'), array(
 			'attr' => array('data-help-key' => 'ms.voucher.expiry.help')
 		))->val()
 			->optional()
 			#->after(new \DateTime) // disabled due to bug messagedigital/cog#169
 			;
+
+
 
 		return $form;
 	}

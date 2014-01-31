@@ -34,6 +34,8 @@
 			<h2>Voucher Details</h2>
 			<ul class="voucher-details">
 
+				<li><span>{{ 'ms.voucher.starts.label'|trans }}</span> {{ voucher.startsAt is empty ? 'No start date' : voucher.startsAt|date }}</li>
+
 				<li><span>{{ 'ms.voucher.expiry.label'|trans }}</span> {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}</li>
 
 				<li><span>{{ 'Created on'|trans }}</span> {{ voucher.authorship.createdAt|date}} </li>
