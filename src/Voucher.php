@@ -3,6 +3,8 @@
 namespace Message\Mothership\Voucher;
 
 use Message\Cog\ValueObject\Authorship;
+use Message\Cog\ValueObject\DateTimeImmutable;
+
 
 /**
  * Represents a single face-value voucher.
@@ -17,6 +19,7 @@ class Voucher
 	public $currencyID;
 	public $amount;
 
+	public $startsAt;
 	public $expiresAt;
 	public $usedAt;
 	public $purchasedAsItem;
@@ -65,6 +68,30 @@ class Voucher
 	 */
 	public function isUsable()
 	{
-		return $this->getBalance() > 0 && (is_null($this->expiresAt) || $this->expiresAt->getTimestamp() > time());
+		return $this->getBalance() > 0
+		 	&& (is_null($this->startsAt)  || $this->startsAt->getTimestamp() < time())
+		 	&& (is_null($this->expiresAt) || $this->expiresAt->getTimestamp() > time());
+	}
+
+	/**
+	 * if voucher is not usuable get the reason.
+	 *
+	 * @return string
+	 */
+	public function getError()
+	{
+		switch ($this) {
+		    case $this->getBalance() <= 0:
+		        $error = "no balance";
+		        return $error;
+		    case $this->startsAt && $this->startsAt->getTimestamp() > time():
+		        $error = "not started";
+		     	return $error;
+		    case $this->expiresAt && $this->expiresAt->getTimestamp() < time():
+		     	$error = "expired";
+		     	return $error;
+		    default:
+		     	$error = NULL;
+		}
 	}
 }
