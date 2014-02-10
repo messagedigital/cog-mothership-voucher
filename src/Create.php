@@ -162,6 +162,7 @@ class Create implements DB\TransactionalInterface
 	 */
 	protected function _validate(Voucher $voucher)
 	{
+
 		if (!$voucher->id) {
 			throw new \InvalidArgumentException('Cannot create voucher: ID is not set');
 		}
@@ -191,6 +192,10 @@ class Create implements DB\TransactionalInterface
 
 		if ($voucher->usedAt) {
 			throw new \InvalidArgumentException('Cannot create voucher: it is already marked as used');
+		}
+
+		if ($voucher->startsAt > $voucher->expiresAt ) {
+			throw new \InvalidArgumentException('Cannot create voucher: start date cannot be after expiry date');
 		}
 	}
 }

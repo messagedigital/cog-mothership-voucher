@@ -3,6 +3,7 @@
 namespace Message\Mothership\Voucher\Controller;
 
 use Message\Cog\Controller\Controller;
+use Message\Mothership\Voucher;
 
 /**
  * Controller to manage adding gift vouchers to orders
@@ -45,37 +46,37 @@ class AddVoucher extends Controller
 				}
 
 				$this->addFlash('success', $this->trans('ms.voucher.add.success', array(
-					'%id%'    => $voucher->id,
+					'%id%' => $voucher->id,
 				)));
 
 				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id);
 
-			} elseif ($voucher->getError() == "no balance") {
+			} elseif ($voucher->getUnusableReason() == $voucher::REASON_NO_BALANCE) {
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.no-balance', array(
-						'%id%'    => $voucher->id,
+					'%id%' => $voucher->id,
 				)));
 
-			} elseif ($voucher->getError() == "not started") {
+			} elseif ($voucher->getUnusableReason() == $voucher::REASON_NOT_STARTED) {
 				$date = $voucher->startsAt->getTimestamp();
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.not-started', array(
 					'%start_date%' => date("Y-m-d g:i a", $date),
-					'%id%'    => $voucher->id,
+					'%id%' => $voucher->id,
 				)));
 
-			} elseif ($voucher->getError() == "expired") {
+			} elseif ($voucher->getUnusableReason() == $voucher::REASON_EXPIRED) {
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.expired', array(
-					'%id%'    => $voucher->id,
+					'%id%' => $voucher->id,
 				)));
 
 			} else {
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.unusable', array(
-					'%id%'    => $voucher->id,
+					'%id%' => $voucher->id,
 				)));
 			}
 
 		} else {
 			$this->addFlash('error', $this->trans('ms.voucher.add.error.invalid', array(
-				'%id%'    => $voucher->id,
+				'%id%' => $voucher->id,
 			)));
 		}
 

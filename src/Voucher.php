@@ -13,6 +13,10 @@ use Message\Cog\ValueObject\DateTimeImmutable;
  */
 class Voucher
 {
+	const REASON_NO_BALANCE = 'no balance';
+	const REASON_NOT_STARTED = 'not started';
+	const REASON_EXPIRED = 'expired';
+
 	public $authorship;
 
 	public $id;
@@ -68,9 +72,10 @@ class Voucher
 	 */
 	public function isUsable()
 	{
-		return $this->getBalance() > 0
-		 	&& (is_null($this->startsAt)  || $this->startsAt->getTimestamp() < time())
-		 	&& (is_null($this->expiresAt) || $this->expiresAt->getTimestamp() > time());
+		if (is_null($this->getUnusableReason()) ) {
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	/**
@@ -78,20 +83,16 @@ class Voucher
 	 *
 	 * @return string
 	 */
-	public function getError()
+	public function getUnusableReason()
 	{
-		switch ($this) {
-		    case $this->getBalance() <= 0:
-		        $error = "no balance";
-		        return $error;
-		    case $this->startsAt && $this->startsAt->getTimestamp() > time():
-		        $error = "not started";
-		     	return $error;
-		    case $this->expiresAt && $this->expiresAt->getTimestamp() < time():
-		     	$error = "expired";
-		     	return $error;
-		    default:
-		     	$error = NULL;
+		if ($this->getBalance() <= 0) {
+			return self::REASON_NO_BALANCE;
+		} elseif ($this->startsAt && $this->startsAt->getTimestamp() > time()) {
+			return self::REASON_NOT_STARTED;
+		} elseif ($this->expiresAt && $this->expiresAt->getTimestamp() < time()) {
+			return self::REASON_EXPIRED;
 		}
+
+		return NULL;
 	}
 }
