@@ -32,7 +32,6 @@
 					<td>{{ voucher.authorship.createdAt|date('h:ia \\o\\n d/m/y') }}</td>
 					<td>{{ voucher.amount|price(voucher.currencyID) }}</td>
 					<td>{{ voucher.getBalance()|price(voucher.currencyID) }}</td>
-					<td>{{ voucher.startsAt is empty ? 'No start date' : voucher.startsAt|date('h:ia \\o\\n d/m/y') }}</td>
 					<td>{{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date('h:ia \\o\\n d/m/y') }}</td>
 				</tr>
 				{% endfor %}

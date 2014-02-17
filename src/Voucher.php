@@ -72,16 +72,13 @@ class Voucher
 	 */
 	public function isUsable()
 	{
-		if (is_null($this->getUnusableReason()) ) {
-			return TRUE;
-		}
-		return FALSE;
+		return is_null($this->getUnusableReason());
 	}
 
 	/**
 	 * if voucher is not usuable get the reason.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getUnusableReason()
 	{
@@ -93,6 +90,6 @@ class Voucher
 			return self::REASON_EXPIRED;
 		}
 
-		return NULL;
+		return null;
 	}
 }
