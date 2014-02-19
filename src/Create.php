@@ -102,9 +102,15 @@ class Create implements DB\TransactionalInterface
 			);
 		}
 
+		// Set the start date to the creation date if it's not already set
+		if (!$voucher->startsAt) {
+			$voucher->startsAt = $voucher->authorship->createdAt();
+		}
+
 		// Set the expiry date if it's not already set & there is an expiry interval defined
 		if ($this->_expiryInterval && !$voucher->expiresAt) {
-			$voucher->expiresAt = $voucher->authorship->createdAt()->add($this->_expiryInterval);
+			$voucher->expiresAt = clone $voucher->startsAt;
+			$voucher->expiresAt->add($this->_expiryInterval);
 		}
 
 		// Force voucher ID to uppercase to avoid case sensitivity issues
@@ -194,7 +200,7 @@ class Create implements DB\TransactionalInterface
 			throw new \InvalidArgumentException('Cannot create voucher: it is already marked as used');
 		}
 
-		if ($voucher->startsAt > $voucher->expiresAt ) {
+		if ($voucher->expiresAt && $voucher->startsAt > $voucher->expiresAt) {
 			throw new \InvalidArgumentException('Cannot create voucher: start date cannot be after expiry date');
 		}
 	}
