@@ -10,6 +10,10 @@ ms.voucher:
     label: Voucher amount
     help:
       short: The value of this voucher that can be redeemed.
+  starts:
+    label: Starts on
+    help:
+      short: This voucher will not be usable before this date/time.
   expiry:
     label: Expires on
     help:
@@ -22,7 +26,9 @@ ms.voucher:
     label: Balance
   add:
     label: I have a gift voucher
-    success: Voucher applied to order successfully
+    success: Voucher '%id%' applied to order successfully.
     error:
-      unusable: Voucher could not be applied to order
-      invalid: Please enter a valid gift voucher code
+      unusable: Voucher '%id%' could not be applied to order.
+      no-balance: Voucher '%id%' could not be applied to order - no remaining balance.
+      not-started: Voucher '%id%' could not be applied to order - start date is '%start_date%'.
+      expired: Voucher '%id%' could not be applied to order - code expired.
