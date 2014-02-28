@@ -97,4 +97,5 @@ class Edit implements DB\TransactionalInterface
 
 		return $voucher;
 	}
+
 }

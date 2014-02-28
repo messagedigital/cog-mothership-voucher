@@ -92,6 +92,10 @@ class Loader
 			);
 
 			// Cast dates to DateTimeImmutable
+			if ($row->starts_at) {
+				$vouchers[$key]->startsAt = new DateTimeImmutable(date('c', $row->starts_at));
+			}
+
 			if ($row->expires_at) {
 				$vouchers[$key]->expiresAt = new DateTimeImmutable(date('c', $row->expires_at));
 			}

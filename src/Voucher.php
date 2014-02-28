@@ -3,6 +3,8 @@
 namespace Message\Mothership\Voucher;
 
 use Message\Cog\ValueObject\Authorship;
+use Message\Cog\ValueObject\DateTimeImmutable;
+
 
 /**
  * Represents a single face-value voucher.
@@ -11,12 +13,17 @@ use Message\Cog\ValueObject\Authorship;
  */
 class Voucher
 {
+	const REASON_NO_BALANCE = 'no balance';
+	const REASON_NOT_STARTED = 'not started';
+	const REASON_EXPIRED = 'expired';
+
 	public $authorship;
 
 	public $id;
 	public $currencyID;
 	public $amount;
 
+	public $startsAt;
 	public $expiresAt;
 	public $usedAt;
 	public $purchasedAsItem;
@@ -65,6 +72,24 @@ class Voucher
 	 */
 	public function isUsable()
 	{
-		return $this->getBalance() > 0 && (is_null($this->expiresAt) || $this->expiresAt->getTimestamp() > time());
+		return is_null($this->getUnusableReason());
+	}
+
+	/**
+	 * if voucher is not usuable get the reason.
+	 *
+	 * @return string|null
+	 */
+	public function getUnusableReason()
+	{
+		if ($this->getBalance() <= 0) {
+			return self::REASON_NO_BALANCE;
+		} elseif ($this->startsAt && $this->startsAt->getTimestamp() > time()) {
+			return self::REASON_NOT_STARTED;
+		} elseif ($this->expiresAt && $this->expiresAt->getTimestamp() < time()) {
+			return self::REASON_EXPIRED;
+		}
+
+		return null;
 	}
 }

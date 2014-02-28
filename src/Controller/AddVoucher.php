@@ -3,6 +3,7 @@
 namespace Message\Mothership\Voucher\Controller;
 
 use Message\Cog\Controller\Controller;
+use Message\Mothership\Voucher;
 
 /**
  * Controller to manage adding gift vouchers to orders
@@ -33,6 +34,7 @@ class AddVoucher extends Controller
 		$form = $this->voucherForm();
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$voucher = $this->get('voucher.loader')->getByID($data['voucher']);
+
 			if ($voucher && $voucher->isUsable()) {
 
 				$paymentMethod = $this->get('order.payment.methods')->get('voucher');
@@ -42,13 +44,40 @@ class AddVoucher extends Controller
 				} else {
 					$amount = $this->get('basket')->getOrder()->getAmountDue();
 				}
-				$this->addFlash('success', $this->trans('ms.voucher.add.success'));
+
+				$this->addFlash('success', $this->trans('ms.voucher.add.success', array(
+					'%id%' => $voucher->id,
+				)));
+
 				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id);
+
+			} elseif ($voucher->getUnusableReason() == $voucher::REASON_NO_BALANCE) {
+				$this->addFlash('error', $this->trans('ms.voucher.add.error.no-balance', array(
+					'%id%' => $voucher->id,
+				)));
+
+			} elseif ($voucher->getUnusableReason() == $voucher::REASON_NOT_STARTED) {
+				$date = $voucher->startsAt->getTimestamp();
+				$this->addFlash('error', $this->trans('ms.voucher.add.error.not-started', array(
+					'%start_date%' => date("Y-m-d g:i a", $date),
+					'%id%' => $voucher->id,
+				)));
+
+			} elseif ($voucher->getUnusableReason() == $voucher::REASON_EXPIRED) {
+				$this->addFlash('error', $this->trans('ms.voucher.add.error.expired', array(
+					'%id%' => $voucher->id,
+				)));
+
 			} else {
-				$this->addFlash('error', $this->trans('ms.voucher.add.error.unusable'));
+				$this->addFlash('error', $this->trans('ms.voucher.add.error.unusable', array(
+					'%id%' => $voucher->id,
+				)));
 			}
+
 		} else {
-			$this->addFlash('error', $this->trans('ms.voucher.add.error.invalid'));
+			$this->addFlash('error', $this->trans('ms.voucher.add.error.invalid', array(
+				'%id%' => $voucher->id,
+			)));
 		}
 
 		return $this->redirectToReferer();

@@ -16,7 +16,7 @@
 	</div>
 	<div class="container-content tall">
 		<div class="group">
-			<h2 class="title">Amount details</h2>
+			<h2 class="title">Amount Details</h2>
 			<div class="content">
 				<ul class="voucher-details">
 					<li>
@@ -32,9 +32,12 @@
 			</div>
 		</div>
 		<div class="group">
-			<h2 class="title">Voucher details</h2>
+			<h2 class="title">Voucher Details</h2>
 			<div class="content">
 				<ul class="voucher-details">
+					<li>
+						<span>{{ 'ms.voucher.starts.label'|trans }}</span> {{ voucher.startsAt is empty ? 'No start date' : voucher.startsAt|date }}
+					</li>
 					<li>
 						<span>{{ 'ms.voucher.expiry.label'|trans }}</span> {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}
 					</li>
