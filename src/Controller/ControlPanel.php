@@ -60,35 +60,23 @@ class ControlPanel extends Controller
 
 	public function create()
 	{
-		return $this->render('::control-panel:create', array(
-			'form' => $this->_getCreateForm(),
-		));
-	}
+		$form = $this->createForm($this->get('voucher.form.create'));
 
-	public function createAction()
-	{
-		$form = $this->_getCreateForm();
+		$form->handleRequest();
 
-		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$voucher = new Voucher;
-			$voucher->id = $this->get('voucher.id_generator')->generate();
-			$voucher->currencyID = 'GBP'; // make this configurable in future
-			$voucher->amount = $data['amount'];
-
-			if ($expiry = $data['expiry']) {
-				$voucher->expiresAt = $expiry;
-			}
-
-			if ($startsAt = $data['startsAt']) {
-				$voucher->startsAt = $startsAt;
-			}
+		if ($form->isValid()) {
+			$voucher = $form->getData();
+$voucher->id = $this->get('voucher.id_generator')->generate();
+$voucher->currencyID = 'GBP'; // make this configurable in future
 
 			$voucher = $this->get('voucher.create')->create($voucher);
 
 			return $this->redirectToRoute('ms.cp.voucher.view', array('id' => $voucher->id));
 		}
 
-		return $this->redirectToReferer();
+		return $this->render('::control-panel:create', array(
+			'form' => $form,
+		));
 	}
 
 	public function invalidate($id)
@@ -117,42 +105,5 @@ class ControlPanel extends Controller
 			->length($this->get('cfg')->voucher->idLength);
 
 		return $searchForm;
-	}
-
-	protected function _getCreateForm()
-	{
-		$form = $this->get('form')
-			->setName('voucher-create')
-			->setMethod('POST')
-			->setAction($this->generateUrl('ms.cp.voucher.create.action'));
-
-		$form->add(
-			'amount',
-			'money',
-			$this->trans('ms.voucher.amount.label'),
-			array(
-				'currency' => 'GBP',
-				'precision' => 2,
-				'attr'     => array(
-					'data-help-key' => 'ms.voucher.amount.help',
-				)
-			)
-		);
-
-		$form->add('startsAt', 'datetime', $this->trans('ms.voucher.starts.label'), array(
-			'attr' => array('data-help-key' => 'ms.voucher.starts.help')
-		))->val()
-			->optional();
-
-		$form->add('expiry', 'datetime', $this->trans('ms.voucher.expiry.label'), array(
-			'attr' => array('data-help-key' => 'ms.voucher.expiry.help')
-		))->val()
-			->optional()
-			#->after(new \DateTime) // disabled due to bug messagedigital/cog#169
-			;
-
-
-
-		return $form;
 	}
 }

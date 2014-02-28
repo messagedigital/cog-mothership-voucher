@@ -39,6 +39,10 @@ class Services implements ServicesInterface
 			return new Voucher\IdGenerator($c['security.string-generator'], $c['voucher.loader'], $c['cfg']->voucher->idLength);
 		};
 
+		$container['voucher.form.create'] = function($c) {
+			return new Voucher\Form\VoucherCreate;
+		};
+
 		// Add voucher payment method
 		$container['order.payment.methods'] = $container->share($container->extend('order.payment.methods', function($methods) {
 			$methods->add(new Voucher\PaymentMethod\Voucher);
