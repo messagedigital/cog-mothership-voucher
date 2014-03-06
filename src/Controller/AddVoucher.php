@@ -51,32 +51,37 @@ class AddVoucher extends Controller
 
 				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id);
 
-			} elseif ($voucher->getUnusableReason() == $voucher::REASON_NO_BALANCE) {
+			} elseif ($voucher && $voucher->getUnusableReason() == $voucher::REASON_NO_BALANCE) {
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.no-balance', array(
 					'%id%' => $voucher->id,
 				)));
 
-			} elseif ($voucher->getUnusableReason() == $voucher::REASON_NOT_STARTED) {
+			} elseif ($voucher && $voucher->getUnusableReason() == $voucher::REASON_NOT_STARTED) {
 				$date = $voucher->startsAt->getTimestamp();
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.not-started', array(
 					'%start_date%' => date("Y-m-d g:i a", $date),
 					'%id%' => $voucher->id,
 				)));
 
-			} elseif ($voucher->getUnusableReason() == $voucher::REASON_EXPIRED) {
+			} elseif ($voucher && $voucher->getUnusableReason() == $voucher::REASON_EXPIRED) {
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.expired', array(
 					'%id%' => $voucher->id,
 				)));
 
+			} elseif (!$voucher) {
+				$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', array(
+					'%id%' => $data['voucher'],
+				)));
+
 			} else {
 				$this->addFlash('error', $this->trans('ms.voucher.add.error.unusable', array(
-					'%id%' => $voucher->id,
+					'%id%' => $data['voucher'],
 				)));
 			}
 
 		} else {
 			$this->addFlash('error', $this->trans('ms.voucher.add.error.invalid', array(
-				'%id%' => $voucher->id,
+				'%id%' => $data['voucher'],
 			)));
 		}
 
