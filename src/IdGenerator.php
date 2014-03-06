@@ -38,7 +38,7 @@ class IdGenerator
 	public function generate()
 	{
 		while (1) {
-			$id = $this->_stringGenerator->setPattern('/^[A-Z0-9]+$/')->generate($this->_length);
+			$id = $this->_stringGenerator->setPattern('/^[A-HJ-KM-NP-Z2-9]+$/')->generate($this->_length);
 			if (!$this->_idExists($id)) {
 				break;
 			}
