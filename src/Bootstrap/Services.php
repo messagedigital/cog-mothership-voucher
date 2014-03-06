@@ -40,7 +40,7 @@ class Services implements ServicesInterface
 		});
 
 		// Add voucher payment method
-		$services['order.payment.methods'] = $services->extend('order.payment.methods', function($methods) {
+		$services->extend('order.payment.methods', function($methods) {
 			$methods->add(new Voucher\PaymentMethod\Voucher);
 
 			return $methods;
