@@ -24,6 +24,8 @@ ms.voucher:
     label: Amount used
   balance:
     label: Balance
+  purchased-as-order:
+    label: Purchased in order:
   add:
     label: I have a gift voucher
     success: Voucher '%id%' applied to order successfully.
