@@ -8,13 +8,13 @@ use Message\Cog\Bootstrap\ServicesInterface;
 
 class Services implements ServicesInterface
 {
-	public function registerServices($container)
+	public function registerServices($services)
 	{
-		$container['voucher.loader'] = $services->factory(function($c) {
+		$services['voucher.loader'] = $services->factory(function($c) {
 			return new Voucher\Loader($c['db.query'], $c['order.item.loader'], $c['order.payment.loader']);
 		});
 
-		$container['voucher.create'] = $services->factory(function($c) {
+		$services['voucher.create'] = $services->factory(function($c) {
 			$create = new Voucher\Create($c['db.query'], $c['voucher.loader'], $c['user.current']);
 
 			// If config is set for ID length, define it here
@@ -31,16 +31,16 @@ class Services implements ServicesInterface
 			return $create;
 		});
 
-		$container['voucher.edit'] = $services->factory(function($c) {
+		$services['voucher.edit'] = $services->factory(function($c) {
 			return new Voucher\Edit($c['db.query'], $c['user.current']);
 		});
 
-		$container['voucher.id_generator'] = $services->factory(function($c) {
+		$services['voucher.id_generator'] = $services->factory(function($c) {
 			return new Voucher\IdGenerator($c['security.string-generator'], $c['voucher.loader'], $c['cfg']->voucher->idLength);
 		});
 
 		// Add voucher payment method
-		$container['order.payment.methods'] = $container->extend('order.payment.methods', function($methods) {
+		$services['order.payment.methods'] = $services->extend('order.payment.methods', function($methods) {
 			$methods->add(new Voucher\PaymentMethod\Voucher);
 
 			return $methods;
