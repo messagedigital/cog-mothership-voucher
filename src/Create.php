@@ -110,7 +110,7 @@ class Create implements DB\TransactionalInterface
 		// Set the expiry date if it's not already set & there is an expiry interval defined
 		if ($this->_expiryInterval && !$voucher->expiresAt) {
 			$voucher->expiresAt = clone $voucher->startsAt;
-			$voucher->expiresAt->add($this->_expiryInterval);
+			$voucher->expiresAt = $voucher->expiresAt->add($this->_expiryInterval);
 		}
 
 		// Force voucher ID to uppercase to avoid case sensitivity issues
