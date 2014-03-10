@@ -199,7 +199,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 			if ($amount != $payment->amount) {
 				$payment->amount = $amount;
 
-				$basket->replaceEntity('payments', $payment);
+				$basket->addEntity('payments', $payment);
 
 				// Prevent further listeners from firing (a new event will be dispatched)
 				$event->stopPropagation();
