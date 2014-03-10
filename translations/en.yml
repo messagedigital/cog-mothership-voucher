@@ -15,9 +15,11 @@ ms.voucher:
     help:
       short: This voucher will not be usable before this date/time.
   expiry:
-    label: Expires on
+    label: Expires
     help:
       short: This voucher will not be usable after this date/time.
+  purchased-as-order:
+    label: Purchased on order
   used-at:
     label: Used on
   used-amount:

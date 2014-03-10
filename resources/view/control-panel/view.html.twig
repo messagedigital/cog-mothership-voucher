@@ -5,87 +5,87 @@
 {% endblock %}
 
 {% block main %}
-
-<div class="title vouchers">
-	<h1>Voucher '{{ voucher.id }}'</h1>
-
-	<div class="controls">
-	    <form action="{{ url('ms.cp.voucher.invalidate', {id: voucher.id}) }}" method="post" id="delete-page">
-	        <input type="hidden" name="_method" value="DELETE">
-	        <button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Invalidate Voucher'|trans }}</button>
-	    </form>
-
+	<div class="title vouchers">
+		<h1>Voucher '{{ voucher.id }}' <span>{{ 'ms.voucher.expiry.label'|trans }} {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}</span></h1>
+		<div class="controls">
+		    <form action="{{ url('ms.cp.voucher.invalidate', {id: voucher.id}) }}" method="post" id="delete-page">
+		        <input type="hidden" name="_method" value="DELETE">
+		        <button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Invalidate Voucher'|trans }}</button>
+		    </form>
+		</div>
 	</div>
-</div>
-<div class="container-content extended dual-column">
-
-	<div class="column">
-
-			<h2>Amount Details</h2>
-			<ul class="voucher-details">
-				<li><span>{{ 'ms.voucher.amount.label'|trans }}</span> {{ voucher.amount|price(voucher.currencyID) }}</li>
-
-				<li><span>{{ 'ms.voucher.used-amount.label'|trans }}</span> {{ voucher.getAmountUsed()|price(voucher.currencyID) }}</li>
-
-				<li class="grand-total"><span>{{ 'ms.voucher.balance.label'|trans }}</span> {{ voucher.getBalance()|price(voucher.currencyID) }}</li>
-
-			</ul>
-
-			<h2>Voucher Details</h2>
-			<ul class="voucher-details">
-
-				<li><span>{{ 'ms.voucher.starts.label'|trans }}</span> {{ voucher.startsAt is empty ? 'No start date' : voucher.startsAt|date }}</li>
-
-				<li><span>{{ 'ms.voucher.expiry.label'|trans }}</span> {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}</li>
-
-				<li><span>{{ 'Created on'|trans }}</span> {{ voucher.authorship.createdAt|date}} </li>
-
-				<li><span>{{ 'Created by'|trans }}</span> {{ voucher.authorship.createdUser.name }}</li>
-
-				{% if voucher.purchasedAsItem is not empty %}
-				<li><span>{{ 'ms.voucher.purchased-as-order.label'|trans }}</span> <a href="{{ url('ms.commerce.order.detail.view.items', {orderID: voucher.purchasedAsItem.order.id}) }}">#{{ voucher.purchasedAsItem.order.id }}</a></li>
-				{% endif %}
-
-				{% if voucher.usedAt is not empty %}
-				<li><span>{{ 'ms.voucher.used-at.label'|trans }}</span> {{ voucher.usedAt|date }}</li>
-				{% endif %}
-			</ul>
-
-	</div>
-
- <div class="column">
-		<h2>Usage history</h2>
-
+	<div class="container-content tall">
+		<div class="group">
+			<h2 class="title">Amount Details</h2>
+			<div class="content">
+				<ul class="voucher-details">
+					<li>
+						<span>{{ 'ms.voucher.amount.label'|trans }}</span> {{ voucher.amount|price(voucher.currencyID) }}
+					</li>
+					<li>
+						<span>{{ 'ms.voucher.used-amount.label'|trans }}</span> {{ voucher.getAmountUsed()|price(voucher.currencyID) }}
+					</li>
+					<li class="grand-total">
+						<span>{{ 'ms.voucher.balance.label'|trans }}</span> {{ voucher.getBalance()|price(voucher.currencyID) }}
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="group">
+			<h2 class="title">Voucher Details</h2>
+			<div class="content">
+				<ul class="voucher-details">
+					<li>
+						<span>{{ 'ms.voucher.starts.label'|trans }}</span> {{ voucher.startsAt is empty ? 'No start date' : voucher.startsAt|date }}
+					</li>
+					<li>
+						<span>{{ 'ms.voucher.expiry.label'|trans }}</span> {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}
+					</li>
+					<li>
+						<span>{{ 'Created on'|trans }}</span> {{ voucher.authorship.createdAt|date}}
+					</li>
+					<li>
+						<span>{{ 'Created by'|trans }}</span> {{ voucher.authorship.createdUser.name }}
+					</li>
+					{% if voucher.purchasedAsItem is not empty %}
+						<li>
+							<span>{{ 'ms.voucher.purchased-as-order.label'|trans }}</span>
+							<a href="{{ url('ms.commerce.order.detail.view.items', {orderID: voucher.purchasedAsItem.order.id}) }}">#{{ voucher.purchasedAsItem.order.id }}</a>
+						</li>
+					{% endif %}
+					{% if voucher.usedAt is not empty %}
+						<li>
+							<span>{{ 'ms.voucher.used-at.label'|trans }}</span> {{ voucher.usedAt|date }}
+						</li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+		<h3>Usage history</h3>
 		{% if voucher.usage is empty %}
-
-		<p class="notice">{{ 'ms.voucher.voucher-no-usage'|trans }}</p>
-
+			<p class="notice">{{ 'ms.voucher.voucher-no-usage'|trans }}</p>
 		{% else %}
-
-		<table>
-			<thead>
-				<tr>
-					<th>Order</th>
-					<th>Customer</th>
-					<th>Order total</th>
-					<th>Amount used</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for payment in voucher.usage %}
-				<tr>
-					<td><a href="{{ url('ms.commerce.order.detail.view', {orderID: payment.order.id}) }}">#{{ payment.order.id }}</a></td>
-					<td>{{ payment.order.user.getName }}</td>
-					<td>{{ payment.order.totalGross|price(payment.order.currencyID) }}</td>
-					<td>{{ payment.amount|price(payment.order.currencyID) }}</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-
+			<table>
+				<thead>
+					<tr>
+						<th>Order</th>
+						<th>Customer</th>
+						<th>Order total</th>
+						<th>Amount used</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for payment in voucher.usage %}
+					<tr>
+						<td><a href="{{ url('ms.commerce.order.detail.view', {orderID: payment.order.id}) }}">#{{ payment.order.id }}</a></td>
+						<td>{{ payment.order.user.getName }}</td>
+						<td>{{ payment.order.totalGross|price(payment.order.currencyID) }}</td>
+						<td>{{ payment.amount|price(payment.order.currencyID) }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
 		{% endif %}
-
 	</div>
 </div>
-
 {% endblock %}
