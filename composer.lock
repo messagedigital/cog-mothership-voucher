@@ -3,67 +3,8 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c0fbd7d837e502917c701959dc61215a",
+    "hash": "fb321a9e763132d2240add23913f047f",
     "packages": [
-        {
-            "name": "dflydev/markdown",
-            "version": "v1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dflydev/dflydev-markdown.git",
-                "reference": "6baed9b50f29c980795b6656d43722aadb126f7e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dflydev/dflydev-markdown/zipball/6baed9b50f29c980795b6656d43722aadb126f7e",
-                "reference": "6baed9b50f29c980795b6656d43722aadb126f7e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "dflydev\\markdown": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Dragonfly Development Inc.",
-                    "email": "info@dflydev.com",
-                    "homepage": "http://dflydev.com"
-                },
-                {
-                    "name": "Beau Simensen",
-                    "email": "beau@dflydev.com",
-                    "homepage": "http://beausimensen.com"
-                },
-                {
-                    "name": "Michel Fortin",
-                    "homepage": "http://michelf.com"
-                },
-                {
-                    "name": "John Gruber",
-                    "homepage": "http://daringfireball.net"
-                }
-            ],
-            "description": "PHP Markdown & Extra",
-            "homepage": "http://github.com/dflydev/dflydev-markdown",
-            "keywords": [
-                "markdown"
-            ],
-            "time": "2013-09-23 12:00:18"
-        },
         {
             "name": "filp/whoops",
             "version": "1.0.10",
@@ -402,16 +343,16 @@
         },
         {
             "name": "message/cog",
-            "version": "2.2.1",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog.git",
-                "reference": "2.2.1"
+                "reference": "3.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog/zipball/2.2.1",
-                "reference": "2.2.1",
+                "url": "https://api.github.com/repos/messagedigital/cog/zipball/3.0.0",
+                "reference": "3.0.0",
                 "shasum": ""
             },
             "require": {
@@ -432,7 +373,7 @@
                 "mtdowling/cron-expression": "1.0.*",
                 "natxet/cssmin": "3.0.*",
                 "php": ">=5.4.0",
-                "pimple/pimple": "1.0.1",
+                "pimple/pimple": "~2.0",
                 "swiftmailer/swiftmailer": "5.0.*",
                 "symfony/console": "2.3.*",
                 "symfony/event-dispatcher": "2.1.*",
@@ -446,10 +387,11 @@
                 "symfony/translation": "2.3.*",
                 "symfony/twig-bridge": "2.3.*",
                 "symfony/twig-bundle": "2.3.*",
+                "symfony/validator": "2.3.*",
                 "symfony/yaml": "2.1.*",
                 "treasure-chest/treasure-chest": "0.1.*",
                 "twig/twig": "1.13.*",
-                "zendframework/zend-debug": "~2.2"
+                "zendframework/zend-debug": "~2.2.6"
             },
             "require-dev": {
                 "mikey179/vfsstream": "1.1.*"
@@ -484,27 +426,27 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog/issues",
-                "source": "https://github.com/messagedigital/cog/tree/2.2.1"
+                "source": "https://github.com/messagedigital/cog/tree/3.0.0"
             },
-            "time": "2014-02-19 10:23:09"
+            "time": "2014-03-18 14:26:47"
         },
         {
             "name": "message/cog-imageresize",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-imageresize.git",
-                "reference": "1.0.2"
+                "reference": "1.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-imageresize/zipball/1.0.2",
-                "reference": "1.0.2",
+                "url": "https://api.github.com/repos/messagedigital/cog-imageresize/zipball/1.1.0",
+                "reference": "1.1.0",
                 "shasum": ""
             },
             "require": {
                 "imagine/imagine": "~0.4",
-                "message/cog": "~2.0",
+                "message/cog": "~3.0",
                 "php": ">=5.4.0"
             },
             "suggest": {
@@ -536,83 +478,28 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-imageresize/issues",
-                "source": "https://github.com/messagedigital/cog-imageresize/tree/1.0.2"
+                "source": "https://github.com/messagedigital/cog-imageresize/tree/1.1.0"
             },
-            "time": "2014-01-30 10:40:00"
-        },
-        {
-            "name": "message/cog-mothership-cms",
-            "version": "1.0.7",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:messagedigital/cog-mothership-cms.git",
-                "reference": "1.0.7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-mothership-cms/zipball/1.0.7",
-                "reference": "1.0.7",
-                "shasum": ""
-            },
-            "require": {
-                "dflydev/markdown": "~1.0",
-                "message/cog": "~2.0",
-                "message/cog-imageresize": "~1.0",
-                "message/cog-mothership-cp": "~1.0",
-                "message/cog-mothership-file-manager": "~1.0",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Message\\Mothership\\CMS\\": "src",
-                    "Message\\Mothership\\CMS\\Test\\": "tests"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "The Message Development Team",
-                    "email": "dev@message.co.uk"
-                }
-            ],
-            "description": "Cog module for content management in Mothership",
-            "homepage": "http://message.co.uk",
-            "keywords": [
-                "cms",
-                "cog",
-                "content",
-                "editing",
-                "mothership"
-            ],
-            "support": {
-                "wiki": "http://server.local/wiki/projects/cog",
-                "issues": "http://github.com/messagedigital/cog-mothership-cms/issues",
-                "source": "https://github.com/messagedigital/cog-mothership-cms/tree/1.0.7"
-            },
-            "time": "2014-02-26 14:57:51"
+            "time": "2014-03-18 14:41:27"
         },
         {
             "name": "message/cog-mothership-commerce",
-            "version": "1.2.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-commerce.git",
-                "reference": "1.2.0"
+                "reference": "2.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-mothership-commerce/zipball/1.2.0",
-                "reference": "1.2.0",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-commerce/zipball/2.0.0",
+                "reference": "2.0.0",
                 "shasum": ""
             },
             "require": {
-                "message/cog": "~2.0",
+                "message/cog": "~3.0",
                 "message/cog-imageresize": "~1.0",
-                "message/cog-mothership-cms": "~1.0",
-                "message/cog-mothership-cp": "~1.0",
+                "message/cog-mothership-cp": "~1.1",
                 "message/cog-mothership-file-manager": "~1.0",
                 "message/cog-user": "~1.0",
                 "php": ">=5.4.0"
@@ -647,26 +534,26 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-commerce/issues",
-                "source": "https://github.com/messagedigital/cog-mothership-commerce/tree/1.2.0"
+                "source": "https://github.com/messagedigital/cog-mothership-commerce/tree/2.0.0"
             },
-            "time": "2014-02-06 16:11:39"
+            "time": "2014-03-18 15:15:37"
         },
         {
             "name": "message/cog-mothership-cp",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-cp.git",
-                "reference": "1.0.3"
+                "reference": "1.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-mothership-cp/zipball/1.0.3",
-                "reference": "1.0.3",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-cp/zipball/1.1.0",
+                "reference": "1.1.0",
                 "shasum": ""
             },
             "require": {
-                "message/cog": "~2.0",
+                "message/cog": "~3.0",
                 "message/cog-user": "~1.0",
                 "php": ">=5.4.0"
             },
@@ -698,28 +585,28 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-cp/issues",
-                "source": "https://github.com/messagedigital/cog-mothership-cp/tree/1.0.3"
+                "source": "https://github.com/messagedigital/cog-mothership-cp/tree/1.1.0"
             },
-            "time": "2014-01-10 15:48:35"
+            "time": "2014-03-18 14:46:07"
         },
         {
             "name": "message/cog-mothership-file-manager",
-            "version": "1.0.4",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-mothership-file-manager.git",
-                "reference": "1.0.4"
+                "reference": "1.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-mothership-file-manager/zipball/1.0.4",
-                "reference": "1.0.4",
+                "url": "https://api.github.com/repos/messagedigital/cog-mothership-file-manager/zipball/1.1.0",
+                "reference": "1.1.0",
                 "shasum": ""
             },
             "require": {
-                "message/cog": "~2.0",
+                "message/cog": "~3.0",
                 "message/cog-imageresize": "~1.0",
-                "message/cog-mothership-cp": "~1.0",
+                "message/cog-mothership-cp": "~1.1",
                 "php": ">=5.4.0"
             },
             "type": "library",
@@ -755,26 +642,26 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-mothership-file-manager/issues",
-                "source": "https://github.com/messagedigital/cog-mothership-file-manager/tree/1.0.4"
+                "source": "https://github.com/messagedigital/cog-mothership-file-manager/tree/1.1.0"
             },
-            "time": "2014-01-31 11:54:24"
+            "time": "2014-03-18 14:53:54"
         },
         {
             "name": "message/cog-user",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:messagedigital/cog-user.git",
-                "reference": "1.0.3"
+                "reference": "1.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagedigital/cog-user/zipball/1.0.3",
-                "reference": "1.0.3",
+                "url": "https://api.github.com/repos/messagedigital/cog-user/zipball/1.1.0",
+                "reference": "1.1.0",
                 "shasum": ""
             },
             "require": {
-                "message/cog": "~2.0",
+                "message/cog": "~3.0",
                 "php": ">=5.4.0"
             },
             "type": "library",
@@ -805,9 +692,9 @@
             "support": {
                 "wiki": "http://server.local/wiki/projects/cog",
                 "issues": "http://github.com/messagedigital/cog-user/issues",
-                "source": "https://github.com/messagedigital/cog-user/tree/1.0.3"
+                "source": "https://github.com/messagedigital/cog-user/tree/1.1.0"
             },
-            "time": "2014-01-10 15:41:05"
+            "time": "2014-03-18 14:37:33"
         },
         {
             "name": "message/wkhtmltopdf",
@@ -1012,16 +899,16 @@
         },
         {
             "name": "pimple/pimple",
-            "version": "v1.0.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Pimple.git",
-                "reference": "86df0604a10c5faf20b466ae6a0b762cc6ed0a35"
+                "reference": "f99b3df12991c22463927aa6a18fd9b2212917f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/86df0604a10c5faf20b466ae6a0b762cc6ed0a35",
-                "reference": "86df0604a10c5faf20b466ae6a0b762cc6ed0a35",
+                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/f99b3df12991c22463927aa6a18fd9b2212917f2",
+                "reference": "f99b3df12991c22463927aa6a18fd9b2212917f2",
                 "shasum": ""
             },
             "require": {
@@ -1030,7 +917,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -1056,7 +943,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2012-11-11 08:32:34"
+            "time": "2014-02-10 08:05:32"
         },
         {
             "name": "psr/log",
@@ -1131,9 +1018,7 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Chris Corbyn"
@@ -1297,9 +1182,7 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Symfony Community",
@@ -1395,9 +1278,7 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Symfony Community",
@@ -1804,9 +1685,7 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Symfony Community",
@@ -1968,9 +1847,7 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Symfony Community",
@@ -2163,6 +2040,69 @@
             "time": "2014-02-04 07:13:29"
         },
         {
+            "name": "symfony/validator",
+            "version": "v2.3.11",
+            "target-dir": "Symfony/Component/Validator",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Validator.git",
+                "reference": "d7afab9f822eb75e589aa5832ea4ab512d31d1ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Validator/zipball/d7afab9f822eb75e589aa5832ea4ab512d31d1ce",
+                "reference": "d7afab9f822eb75e589aa5832ea4ab512d31d1ce",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/translation": "~2.0"
+            },
+            "require-dev": {
+                "symfony/config": "~2.2",
+                "symfony/http-foundation": "~2.1",
+                "symfony/intl": "~2.3",
+                "symfony/yaml": "~2.0"
+            },
+            "suggest": {
+                "doctrine/common": "",
+                "symfony/config": "",
+                "symfony/http-foundation": "",
+                "symfony/intl": "",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Validator\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Validator Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-02-18 16:30:53"
+        },
+        {
             "name": "symfony/yaml",
             "version": "v2.1.13",
             "target-dir": "Symfony/Component/Yaml",
@@ -2193,9 +2133,7 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Symfony Community",
@@ -2289,14 +2227,11 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Armin Ronacher",
-                    "email": "armin.ronacher@active-4.com",
-                    "role": "Project Founder"
+                    "email": "armin.ronacher@active-4.com"
                 }
             ],
             "description": "Twig, the flexible, fast, and secure template language for PHP",
@@ -2308,25 +2243,28 @@
         },
         {
             "name": "zendframework/zend-debug",
-            "version": "2.2.5",
+            "version": "2.2.6",
             "target-dir": "Zend/Debug",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/Component_ZendDebug.git",
-                "reference": "1c4099a9f287ece9a32cf569b30ef8c20e123c7a"
+                "reference": "be57c1264e1a95306a83a1cb8aa46738a21d76c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendDebug/zipball/1c4099a9f287ece9a32cf569b30ef8c20e123c7a",
-                "reference": "1c4099a9f287ece9a32cf569b30ef8c20e123c7a",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendDebug/zipball/be57c1264e1a95306a83a1cb8aa46738a21d76c6",
+                "reference": "be57c1264e1a95306a83a1cb8aa46738a21d76c6",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
-                "zendframework/zend-escaper": "self.version"
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "zendframework/zend-escaper": "*"
             },
             "suggest": {
-                "ext/xdebug": "XDebug, for better backtrace output"
+                "ext/xdebug": "XDebug, for better backtrace output",
+                "zendframework/zend-escaper": "To support escaped output"
             },
             "type": "library",
             "extra": {
@@ -2348,47 +2286,7 @@
                 "debug",
                 "zf2"
             ],
-            "time": "2013-05-01 21:52:57"
-        },
-        {
-            "name": "zendframework/zend-escaper",
-            "version": "2.2.5",
-            "target-dir": "Zend/Escaper",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zendframework/Component_ZendEscaper.git",
-                "reference": "5db67b32359d86326077209f1fefbbf1183911e8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendEscaper/zipball/5db67b32359d86326077209f1fefbbf1183911e8",
-                "reference": "5db67b32359d86326077209f1fefbbf1183911e8",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2-dev",
-                    "dev-develop": "2.3-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Zend\\Escaper\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "keywords": [
-                "escaper",
-                "zf2"
-            ],
-            "time": "2013-05-01 21:53:03"
+            "time": "2014-01-02 18:00:12"
         }
     ],
     "packages-dev": [
