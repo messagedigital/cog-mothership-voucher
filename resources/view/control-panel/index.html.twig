@@ -1,17 +1,12 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
 {% block sidebar %}
 	{{ render(controller('Message:Mothership:Voucher::Controller:ControlPanel#sidebar')) }}
 {% endblock %}
-
 {% block main %}
 	<div class="title vouchers">
-		<h1>Vouchers</h1>
+		<h1>All vouchers</h1>
 	</div>
-
-	<div class="container-content extended vouchers">
-		<h2>Outstanding vouchers</h2>
-
+	<div class="container-content vouchers">
 		{% if vouchers|length == 0 %}
 		<p class="notice">{{ 'ms.voucher.none-outstanding'|trans }}</p>
 		{% else %}
@@ -29,10 +24,10 @@
 				{% for voucher in vouchers %}
 				<tr>
 					<td><a href="{{ url('ms.cp.voucher.view', {id : voucher.id}) }}">{{ voucher.id }}</a></td>
-					<td>{{ voucher.authorship.createdAt|date('h:ia \\o\\n d/m/y') }}</td>
+					<td>{{ voucher.authorship.createdAt|date }}</td>
 					<td>{{ voucher.amount|price(voucher.currencyID) }}</td>
 					<td>{{ voucher.getBalance()|price(voucher.currencyID) }}</td>
-					<td>{{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date('h:ia \\o\\n d/m/y') }}</td>
+					<td>{{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
