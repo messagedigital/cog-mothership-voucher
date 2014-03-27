@@ -45,5 +45,13 @@ class Services implements ServicesInterface
 
 			return $methods;
 		});
+
+		if (isset($services['epos.tender.methods'])) {
+			$services->extend('epos.tender.methods', function($methods, $c) {
+				$methods->add(new Voucher\TenderMethod\Voucher);
+
+				return $methods;
+			});
+		}
 	}
 }
