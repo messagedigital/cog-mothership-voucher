@@ -4,6 +4,10 @@ namespace Message\Mothership\Voucher\TenderMethod;
 
 use Message\Mothership\Epos\TenderMethod\MethodInterface;
 
+use Message\Cog\Module\ReferenceParserInterface;
+
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
+
 /**
  * Voucher tender method.
  *
@@ -11,6 +15,13 @@ use Message\Mothership\Epos\TenderMethod\MethodInterface;
  */
 class Voucher implements MethodInterface
 {
+	protected $_referenceParser;
+
+	public function __construct(ReferenceParserInterface $referenceParser)
+	{
+		$this->_referenceParser = $referenceParser;
+	}
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -48,8 +59,14 @@ class Voucher implements MethodInterface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getNumberPadReplacementRequestUrl()
+	public function getNumberPadReplacementController()
 	{
-		return 'hi';
+		$reference = $this->_referenceParser->parse(
+			'Message:Mothership:Voucher::Controller:Epos#tenderVoucher'
+		);
+
+		return new ControllerReference(
+			$reference->getSymfonyLogicalControllerName()
+		);
 	}
 }
