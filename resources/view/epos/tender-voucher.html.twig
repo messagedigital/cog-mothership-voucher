@@ -1,24 +1,23 @@
 <div class="tender-voucher">
-	<form action="" method="post" id="find-voucher">
-		<label for="voucher">Please enter or type a voucher's code below:</label>
-		<input type="text" id="voucher" name="voucher[voucher_id]" value="" />
-		<button name="find_voucher" id="find_voucher" type="voucher[submit]">Search</button>
-	</form>
+	{{ form_start(search_form, {attr: {id: 'find-voucher'}}) }}
+		{{ form_row(search_form.id )}}
+		<button type="submit">Search</button>
+	{{ form_end(search_form) }}
 
-	{#	<?php if($voucher = $control->getVoucherDetail()): ?>
-			<div class="result">
-				<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" class="use">
-					<input type="hidden" name="add[code][<?php echo $voucher['voucher_code']; ?>]" value="<?php echo number_format($voucher['balance'],2); ?>" />
-					<button name="add[submit]" id="add" value="Use">Use</button>
-				</form>
-				<ul>
-					<li><strong><?php echo $voucher['voucher_code']; ?></strong><em>Created on <?php echo date("d/m/Y",$voucher['created_date']); ?></em></li>
-					<li></li>
-					<li><span>Original Value:</span> <span>&pound;<?php echo number_format($voucher['original_value'],2); ?></span></li>
-					<li><span>Balance:</span> <span><b>&pound;<?php echo number_format($voucher['balance'],2); ?></b></span></li>
-				</ul>
-			</div>
-			<?php endif; ?>
+	{% if found_voucher %}
+	<div class="result">
+		{{ form_start(found_voucher_form, {attr: {class: 'use'}}) }}
+			<button type="submit">Use</button>
+		{{ form_end(found_voucher_form) }}
+		<ul>
+			<li><strong>{{ found_voucher.id }}</strong><em>Created on {{ found_voucher.authorship.createdAt|date('d/m/Y') }}</em></li>
+			<li></li>
+			<li><span>Original Value:</span> <span>{{ found_voucher.amount|price(found_voucher.currencyID) }}</span></li>
+			<li><span>Balance:</span> <span><b>{{ found_voucher.balance|price(found_voucher.currencyID) }}</b></span></li>
+		</ul>
+	</div>
+	{% endif %}
+			{#
 			<ul class="payment-listing">
 				<?php foreach($control->getVoucherPayments() as $code => $payment): ?>
 				<li id="voucher-<?php echo $payment->getCode(); ?>">
