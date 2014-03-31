@@ -30,5 +30,8 @@ class Routes implements RoutesInterface
 
 		$router['ms.epos.sale.modal']->add('ms.epos.sale.modal.tender.voucher.apply', '/tender/voucher/apply', 'Message:Mothership:Voucher::Controller:Epos#applyVoucher')
 			->setMethod('POST');
+
+		$router['ms.epos.sale.modal']->add('ms.epos.sale.modal.tender.voucher.remove', '/tender/voucher/remove', 'Message:Mothership:Voucher::Controller:Epos#removeVoucher')
+			->setMethod('POST');
 	}
 }

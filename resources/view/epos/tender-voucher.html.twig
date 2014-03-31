@@ -21,10 +21,9 @@
 	<ul class="payment-listing">
 		{% for voucher in vouchers %}
 		<li id="voucher-{{ voucher.id }}">
-			{#<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" class="remove">
-				<input type="hidden" name="remove[code][<?php echo $payment->getCode(); ?>]" value="<?php echo number_format($payment->getValue(Locale::instance()->getCurrencyID(false)),2); ?>" />
-				<button name="remove[submit]" id="remove" value="Remove">Remove</button>
-			</form>#}
+			{{ form_start(voucher_remove_forms[voucher.id], {attr: {class: 'remove'}}) }}
+				<button type="submit">Remove</button>
+			{{ form_end(voucher_remove_forms[voucher.id]) }}
 			<ul>
 				<li><strong>{{ voucher.id }}</strong><em>Created on {{ voucher.authorship.createdAt|date('d/m/Y') }}</em></li>
 				<li></li>

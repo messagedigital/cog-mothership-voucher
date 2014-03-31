@@ -54,6 +54,10 @@ class Services implements ServicesInterface
 			return new Voucher\Form\Epos\VoucherApply;
 		});
 
+		$services['voucher.form.epos.remove'] = $services->factory(function() {
+			return new Voucher\Form\Epos\VoucherRemove;
+		});
+
 		if (isset($services['epos.tender.methods'])) {
 			$services->extend('epos.tender.methods', function($methods, $c) {
 				$methods->add(new Voucher\TenderMethod\Voucher($c['reference_parser']));

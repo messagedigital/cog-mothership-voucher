@@ -40,10 +40,11 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 
 	public function tenderVoucher(Voucher $foundVoucher = null)
 	{
-		$foundVoucherForm = null;
-		$searchForm       = $this->_getSearchForm();
-		$vouchers         = [];
-		$voucherLoader    = $this->get('voucher.loader');
+		$foundVoucherForm   = null;
+		$searchForm         = $this->_getSearchForm();
+		$vouchers           = [];
+		$voucherRemoveForms = [];
+		$voucherLoader      = $this->get('voucher.loader');
 
 		if ($foundVoucher) {
 			$foundVoucherForm = $this->createForm($this->get('voucher.form.epos.apply'), $foundVoucher, [
@@ -61,6 +62,13 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 
 			if (($voucher = $voucherLoader->getByID($payment->reference)) instanceof Voucher) {
 				$vouchers[$voucher->id] = $voucher;
+
+				$voucherRemoveForms[$voucher->id] = $this->createForm($this->get('voucher.form.epos.remove'), $voucher, [
+					'action' => $this->generateUrl('ms.epos.sale.modal.tender.voucher.remove', [
+						'branch' => $this->_branch->getName(),
+						'till'   => $this->_till,
+					]),
+				])->createView();
 			}
 		}
 
@@ -69,6 +77,7 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 			'found_voucher'      => $foundVoucher,
 			'found_voucher_form' => $foundVoucherForm,
 			'vouchers'           => $vouchers,
+			'voucher_remove_forms'    => $voucherRemoveForms,
 		]);
 	}
 
@@ -83,7 +92,6 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 			$id = $searchForm->getData()['id'];
 
 			$foundVoucher = $this->get('voucher.loader')->getByID($id);
-			// make add form for the voucher
 
 			if (!($foundVoucher instanceof Voucher)) {
 				$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', ['%id%' => $id]));
@@ -135,6 +143,31 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 			return new JsonResponse([
 				'self'         => $view->getContent(),
 				'tenderAmount' => isset($payment) ? $payment->amount : 0,
+			]);
+		}
+
+		return $view;
+	}
+
+	public function removeVoucher(Request $request)
+	{
+		$form  = $this->createForm($this->get('voucher.form.epos.remove'));
+		$order = $this->get('epos.sale');
+
+		$form->handleRequest();
+
+		if ($form->isValid()) {
+			$voucherID = $form->getData();
+
+			$order->removeEntity('payments', $voucherID);
+		}
+
+		$view = $this->forward('Message:Mothership:Voucher::Controller:Epos#tenderVoucher');
+
+		if ('json' === $request->getFormat($request->getAllowedContentTypes()[0])) {
+			return new JsonResponse([
+				'self'         => $view->getContent(),
+				'tenderAmount' => 0,
 			]);
 		}
 
