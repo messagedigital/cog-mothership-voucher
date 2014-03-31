@@ -42,6 +42,8 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 	{
 		$foundVoucherForm = null;
 		$searchForm       = $this->_getSearchForm();
+		$vouchers         = [];
+		$voucherLoader    = $this->get('voucher.loader');
 
 		if ($foundVoucher) {
 			$foundVoucherForm = $this->createForm($this->get('voucher.form.epos.apply'), $foundVoucher, [
@@ -52,10 +54,21 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 			]);
 		}
 
+		foreach ($this->get('epos.sale')->getOrder()->payments as $payment) {
+			if ('voucher' !== $payment->method->getName()) {
+				continue;
+			}
+
+			if (($voucher = $voucherLoader->getByID($payment->reference)) instanceof Voucher) {
+				$vouchers[$voucher->id] = $voucher;
+			}
+		}
+
 		return $this->render('Message:Mothership:Voucher::epos:tender-voucher', [
-			'search_form'   => $searchForm,
-			'found_voucher' => $foundVoucher,
+			'search_form'        => $searchForm,
+			'found_voucher'      => $foundVoucher,
 			'found_voucher_form' => $foundVoucherForm,
+			'vouchers'           => $vouchers,
 		]);
 	}
 

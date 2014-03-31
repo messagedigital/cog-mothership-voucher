@@ -17,22 +17,21 @@
 		</ul>
 	</div>
 	{% endif %}
-			{#
-			<ul class="payment-listing">
-				<?php foreach($control->getVoucherPayments() as $code => $payment): ?>
-				<li id="voucher-<?php echo $payment->getCode(); ?>">
-					<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" class="remove">
-						<input type="hidden" name="remove[code][<?php echo $payment->getCode(); ?>]" value="<?php echo number_format($payment->getValue(Locale::instance()->getCurrencyID(false)),2); ?>" />
-						<button name="remove[submit]" id="remove" value="Remove">Remove</button>
-					</form>
-					<ul>
-						<li><strong><?php echo $payment->getCode(); ?></strong><em>Created on <?php echo date('d/m/Y', strtotime($payment->getCreatedDate())); ?></em></li>
-						<li></li>
-						<li><span>Original Value:</span> <span>&pound;<?php echo number_format($payment->getOriginalValue(Locale::instance()->getCurrencyID(false)),2); ?></span></li>
-						<li><span>Balance:</span> <span><b>&pound;<?php echo number_format($payment->getValue(Locale::instance()->getCurrencyID(false)), 2); ?></b></span></li>
-					</ul>
-				</li>
-				<?php endforeach; ?>
+
+	<ul class="payment-listing">
+		{% for voucher in vouchers %}
+		<li id="voucher-{{ voucher.id }}">
+			{#<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" class="remove">
+				<input type="hidden" name="remove[code][<?php echo $payment->getCode(); ?>]" value="<?php echo number_format($payment->getValue(Locale::instance()->getCurrencyID(false)),2); ?>" />
+				<button name="remove[submit]" id="remove" value="Remove">Remove</button>
+			</form>#}
+			<ul>
+				<li><strong>{{ voucher.id }}</strong><em>Created on {{ voucher.authorship.createdAt|date('d/m/Y') }}</em></li>
+				<li></li>
+				<li><span>Original Value:</span> <span>{{ voucher.amount|price(voucher.currencyID) }}</span></li>
+				<li><span>Balance:</span> <span><b>{{ voucher.balance|price(voucher.currencyID) }}</b></span></li>
 			</ul>
-	#}
+		</li>
+		{% endfor %}
+	</ul>
 </div>
