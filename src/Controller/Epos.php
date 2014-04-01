@@ -5,6 +5,7 @@ namespace Message\Mothership\Voucher\Controller;
 use Message\Mothership\Voucher\Voucher;
 
 use Message\Mothership\Epos\Branch;
+use Message\Mothership\Commerce\Order\Order;
 use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
 
 use Message\Cog\Controller\Controller;
@@ -143,7 +144,7 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 		if ('json' === $request->getFormat($request->getAllowedContentTypes()[0])) {
 			return new JsonResponse([
 				'self'         => $view->getContent(),
-				'tenderAmount' => isset($payment) ? $payment->amount : 0,
+				'tenderAmount' => $this->_getTotalVoucherPayment($order->getOrder()),
 			]);
 		}
 
@@ -168,14 +169,14 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 		if ('json' === $request->getFormat($request->getAllowedContentTypes()[0])) {
 			return new JsonResponse([
 				'self'         => $view->getContent(),
-				'tenderAmount' => 0,
+				'tenderAmount' => $this->_getTotalVoucherPayment($order->getOrder()),
 			]);
 		}
 
 		return $view;
 	}
 
-	public function _getSearchForm()
+	protected function _getSearchForm()
 	{
 		$searchForm = $this->createForm($this->get('voucher.form.epos.search'), null, [
 			'action' => $this->generateUrl('ms.epos.sale.modal.tender.voucher.search', [
@@ -185,5 +186,20 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 		]);
 
 		return $searchForm;
+	}
+
+	protected function _getTotalVoucherPayment(Order $order)
+	{
+		$tenderAmount = 0;
+
+		foreach ($order->payments as $orderPayment) {
+			if ('voucher' !== $orderPayment->method->getName()) {
+				continue;
+			}
+
+			$tenderAmount += $orderPayment->amount;
+		}
+
+		return $tenderAmount;
 	}
 }
