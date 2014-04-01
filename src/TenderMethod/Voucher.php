@@ -40,10 +40,14 @@ class Voucher implements MethodInterface
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * Returns null to stop the default tendering logic adding the payment. The
+	 * payment is added by the vouchers tendering functionality so it doesn't
+	 * need re-adding.
 	 */
 	public function getPaymentMethod()
 	{
-		return 'voucher';
+		return null;
 	}
 
 	/**
