@@ -19,8 +19,19 @@ class VoucherApply extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+		$formDisabled = array_key_exists('disabled', $options) && true == $options['disabled'];
+		$attributes   = $formDisabled
+			? ['class' => 'disabled', 'disabled' => true]
+			: [];
+
 		$builder->add('id', 'hidden', [
 			'constraints' => new Constraints\NotBlank,
+			'attr'        => $attributes,
+		]);
+
+		$builder->add('submit', 'submit', [
+			'label' => $formDisabled ? 'Voucher already in use' : 'Use',
+			'attr'  => $attributes,
 		]);
 	}
 
@@ -31,6 +42,7 @@ class VoucherApply extends AbstractType
 	{
 		$resolver->setDefaults([
 			'data_class' => 'Message\\Mothership\\Voucher\\Voucher',
+			'disabled'   => false,
 		]);
 	}
 

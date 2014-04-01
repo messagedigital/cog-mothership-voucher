@@ -6,9 +6,7 @@
 
 	{% if found_voucher %}
 	<div class="result">
-		{{ form_start(found_voucher_form, {attr: {class: 'use'}}) }}
-			<button type="submit">Use</button>
-		{{ form_end(found_voucher_form) }}
+		{{ form(found_voucher_form, {attr: {class: 'use'}}) }}
 		<ul>
 			<li><strong>{{ found_voucher.id }}</strong><em>Created on {{ found_voucher.authorship.createdAt|date('d/m/Y') }}</em></li>
 			<li></li>
