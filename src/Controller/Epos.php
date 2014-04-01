@@ -159,7 +159,7 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 		$form->handleRequest();
 
 		if ($form->isValid()) {
-			$voucherID = $form->getData();
+			$voucherID = $form->getData()['id'];
 
 			$order->removeEntity('payments', $voucherID);
 		}
