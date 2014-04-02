@@ -19,5 +19,7 @@ class Events implements EventsInterface
 				'ms.cp.voucher'
 			));
 		});
+
+		$dispatcher->addSubscriber(new Voucher\EventListener\ReceiptCreateListener);
 	}
 }

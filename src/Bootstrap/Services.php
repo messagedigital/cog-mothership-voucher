@@ -65,5 +65,16 @@ class Services implements ServicesInterface
 				return $methods;
 			});
 		}
+
+		if (isset($services['receipt.templates'])) {
+			$services->extend('receipt.templates', function($templates, $c) {
+				$templates->add(new Voucher\Receipt\VoucherUsage(
+					$c['cfg']->merchant->companyName//,
+			//		$c['voucher.loader']
+				));
+
+				return $templates;
+			});
+		}
 	}
 }
