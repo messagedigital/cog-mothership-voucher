@@ -28,18 +28,20 @@ use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
 class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterface
 {
 	protected $_merchantName;
-	protected $_voucherPayment;
 	protected $_voucherLoader;
+
+	protected $_voucherPayment;
+	protected $_voucher;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param string $merchantName The merchant name to be printed on receipts
 	 */
-	public function __construct($merchantName/*, Loader $voucherLoader*/)
+	public function __construct($merchantName, Loader $voucherLoader)
 	{
 		$this->_merchantName = $merchantName;
-		//$this->_voucherLoader = $voucherLoader;
+		$this->_voucherLoader = $voucherLoader;
 	}
 
 	/**
@@ -64,7 +66,12 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 			throw new \InvalidArgumentException('Voucher usage receipt only accepts voucher payments');
 		}
 
+		if (!$voucher = $this->_voucherLoader->getByID($payment->reference)) {
+			throw new \InvalidArgumentException(sprintf('Could not load voucher `%s`', $payment->reference));
+		}
+
 		$this->_voucherPayment = $payment;
+		$this->_voucher        = $voucher;
 
 		return $this;
 	}
@@ -82,7 +89,6 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 		$transaction    = $this->_transaction;
 		$voucherCode    = $this->_voucherPayment->reference;
 		$paymentAmount  = $this->_voucherPayment->amount;
-		//$voucher        = $this->_voucherLoader->getByID($voucherCode);
 
 		// Find the order from the transaction
 		$orders = $this->_transaction->records->getByType(Order::RECORD_TYPE);
@@ -93,18 +99,16 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 			$builder->append(chr(29) . '!' . chr(34) . "\r\r"); // I think this makes font big
 			$builder->append(strtoupper($voucherCode) . "\n\n");
 			$builder->append(chr(27) . '@'); //  ESC @ / RESET
-			$builder->barcode($voucherCode, $builder::BARCODE_CODE39);
+			$builder->barcode($voucherCode, $builder::BARCODE_CODE39, false);
 		});
 
-		$builder->append("\n\n");
+		$builder->append("\n\n\n");
 
-		// $builder->split('Previous balance:', number_format($voucher->amount + $paymentAmount, 2));
-		$builder->split('Previous balance:', number_format(0, 2));
+		$builder->split('Previous balance:', number_format($this->_voucher->getBalance() + $paymentAmount, 2));
 		$builder->split('Adjustment:', number_format(-$paymentAmount, 2));
 
 		$builder->bold(function($builder) use ($order) {
-	//		$builder->split('New balance:', number_format($voucher->amount, 2));
-			$builder->split('New balance:', number_format(0, 2));
+			$builder->split('New balance:', number_format($this->_voucher->getBalance(), 2));
 		});
 
 		$builder->append("\n\n");
