@@ -45,11 +45,19 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 */
 	public function getName()
 	{
 		return 'voucher_usage';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getCopies()
+	{
+		return ['store', 'customer'];
 	}
 
 	/**
@@ -77,7 +85,7 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 */
 	public function build(BuilderInterface $builder)
 	{
@@ -102,7 +110,7 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 			$builder->barcode($voucherCode, $builder::BARCODE_CODE39, false);
 		});
 
-		$builder->append("\n\n\n");
+		$builder->append("\n\n");
 
 		$builder->split('Previous balance:', number_format($this->_voucher->getBalance() + $paymentAmount, 2));
 		$builder->split('Adjustment:', number_format(-$paymentAmount, 2));
