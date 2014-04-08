@@ -26,30 +26,42 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 	{
 		return array(
 			Transaction\Events::CREATE_COMPLETE => array(
-				array('createNewSaleReceipt'),
+				array('createVoucherUsageReceipt'),
 			),
 		);
 	}
 
 	/**
+	 * Create a "receipt usage" receipt for orders where a voucher has been used
+	 * as a payment method
 	 *
+	 * This event listens to the "create complete" event because we need the
+	 * order to have already been created in the database for the receipt so
+	 * we can get the order's ID and show it on the receipt.
 	 *
 	 * @param Transaction\Event $event
 	 */
-	public function createNewSaleReceipt(Transaction\Event\Event $event)
+	public function createVoucherUsageReceipt(Transaction\Event\Event $event)
 	{
 		$transaction = $event->getTransaction();
 
+		// Skip if the transaction is not of type "new order"
 		if (Transaction\Types::ORDER !== $transaction->type) {
 			return false;
 		}
 
-		$receiptCreate = $this->get('order.receipt.create');
-		$template = $this->get('receipt.templates')->get('voucher_usage');
-		$factory = $this->get('receipt.factory');
+		$receiptCreate   = $this->get('order.receipt.create');
+		$transactionEdit = $this->get('order.transaction.edit');
+		$template        = $this->get('receipt.templates')->get('voucher_usage');
+		$factory         = $this->get('receipt.factory');
 
 		$orders = $transaction->records->getByType(Order::RECORD_TYPE);
 		$order = array_shift($orders);
+
+		// Skip if the order was not placed on EPOS
+		if ('epos' !== $order->type) {
+			return false;
+		}
 
 		foreach ($transaction->records->getByType(Payment::RECORD_TYPE) as $payment) {
 			if ('voucher' !== $payment->method->getName()) {
@@ -59,15 +71,20 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 			$template->setTransaction($transaction);
 			$template->setVoucherPayment($payment);
 
-			$receipt = $factory->build($template);
-			$orderReceipt = new Receipt\OrderEntity\Receipt($receipt);
+			$receipts = $factory->build($template);
 
-			// Add the receipt to the order
-			$orderReceipt->order = $order;
-			$receiptCreate->create($orderReceipt);
+			foreach ($receipts as $receipt) {
+				$orderReceipt = new Receipt\OrderEntity\Receipt($receipt);
+				$orderReceipt->order = $order;
+
+				$receiptCreate->create($orderReceipt);
+
+				// Add the order receipt to the transaction
+				$transaction->records->add($orderReceipt);
+			}
 		}
 
-		// TODO: add to order
-		// TODO: add to transaction as a new record
+		// Save the updated transaction
+		$transactionEdit->save($transaction);
 	}
 }
