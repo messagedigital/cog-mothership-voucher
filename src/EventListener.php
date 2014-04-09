@@ -143,12 +143,13 @@ class EventListener extends BaseListener implements SubscriberInterface
 		// Mark this listener as busy
 		$this->_busy = true;
 
-		$basket        = $event->getAssembler();
-		$order         = $basket->getOrder();
-		$method        = $this->get('order.payment.methods')->get('voucher');
-		$voucherLoader = $this->get('voucher.loader');
-		$leftToPay     = $order->totalGross;
-		$vouchers      = [];
+		$basket           = $event->getAssembler();
+		$order            = $basket->getOrder();
+		$method           = $this->get('order.payment.methods')->get('voucher');
+		$voucherLoader    = $this->get('voucher.loader');
+		$voucherValidator = $this->get('voucher.validator');
+		$leftToPay        = $order->totalGross;
+		$vouchers         = [];
 
 		// Grab the vouchers for all voucher payments
 		foreach ($order->payments->getByProperty('method', $method) as $payment) {
@@ -178,7 +179,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 			// If there is nothing left to pay or the voucher isn't usable, remove it
 			if ($leftToPay <= 0
-			 || !$voucher->isUsable()) {
+			 || !$voucherValidator->isUsable($voucher)) {
 				$basket->removeEntity('payments', $payment);
 
 				// Prevent further listeners from firing (a new event will be dispatched)

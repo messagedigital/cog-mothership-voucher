@@ -39,6 +39,10 @@ class Services implements ServicesInterface
 			return new Voucher\IdGenerator($c['security.string-generator'], $c['voucher.loader'], $c['cfg']->voucher->idLength);
 		});
 
+		$services['voucher.validator'] = $services->factory(function($c) {
+			return new Voucher\Validator($c['translator']);
+		});
+
 		// Add voucher payment method
 		$services->extend('order.payment.methods', function($methods) {
 			$methods->add(new Voucher\PaymentMethod\Voucher);
