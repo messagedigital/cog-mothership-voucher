@@ -120,8 +120,9 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 
 	public function applyVoucher(Request $request)
 	{
-		$form  = $this->createForm($this->get('voucher.form.epos.apply'));
-		$order = $this->get('epos.sale');
+		$voucherLoader = $this->get('voucher.loader');
+		$form          = $this->createForm($this->get('voucher.form.epos.apply'));
+		$order         = $this->get('epos.sale');
 
 		$form->handleRequest();
 
@@ -129,7 +130,7 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 			$voucher = $form->getData();
 
 			// Reload the voucher, the form doesn't pass **all** the data
-			$voucher = $this->get('voucher.loader')->getByID($voucher->id);
+			$voucher = $voucherLoader->getByID($voucher->id);
 
 			if (!($voucher instanceof Voucher)) {
 				throw new \LogicException('Voucher ID to be used is not valid: something has changed');
@@ -147,9 +148,22 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 		$view = $this->forward('Message:Mothership:Voucher::Controller:Epos#tenderVoucher');
 
 		if ('json' === $request->getFormat($request->getAllowedContentTypes()[0])) {
+			// Calculate the maximum possible tender amount for vouchers
+			$maximumPayment = $voucher->getBalance();
+			foreach ($order->getOrder()->payments->all() as $payment) {
+				if ('voucher' !== $payment->method->getName()
+				 || $payment->reference === $voucher->id) {
+					continue;
+				}
+
+				$paymentVoucher = $voucherLoader->getByID($payment->reference);
+				$maximumPayment += $paymentVoucher->getBalance();
+			}
+
 			return new JsonResponse([
-				'self'         => $view->getContent(),
-				'tenderAmount' => $this->_getTotalVoucherPayment($order->getOrder()),
+				'self'           => $view->getContent(),
+				'tenderAmount'   => $this->_getTotalVoucherPayment($order->getOrder()),
+				'maximumPayment' => $maximumPayment,
 			]);
 		}
 
