@@ -98,8 +98,7 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 			if (!($foundVoucher instanceof Voucher)) {
 				$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', ['%id%' => $id]));
 			}
-
-			if ($error = $this->get('voucher.validator')->getError($foundVoucher)) {
+			elseif ($error = $this->get('voucher.validator')->getError($foundVoucher)) {
 				$this->addFlash('error', $error);
 				$foundVoucher = null;
 			}
