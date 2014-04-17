@@ -21,7 +21,6 @@ use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
  *
  * @author Joe Holdcroft <joe@message.co.uk>
  *
- * @todo  GENERATE TWO COPIES!
  * @todo encapsulate receipt footer to avoid code duplication
  * @todo move the font size stuff to the buider
  */

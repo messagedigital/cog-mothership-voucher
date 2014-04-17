@@ -77,6 +77,10 @@ class Services implements ServicesInterface
 					$c['voucher.loader']
 				));
 
+				$templates->add(new Voucher\Receipt\VoucherGenerated(
+					$c['cfg']->merchant->companyName
+				));
+
 				return $templates;
 			});
 		}
