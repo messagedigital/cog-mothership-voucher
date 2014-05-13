@@ -48,10 +48,12 @@ class Voucher implements MethodInterface
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * Payments are only added externally for payments, not refunds.
 	 */
-	public function isPaymentAddedExternally()
+	public function isPaymentAddedExternally($type)
 	{
-		return true;
+		return (self::PAYMENT_TYPE_PAYMENT === $type);
 	}
 
 	/**
@@ -59,7 +61,7 @@ class Voucher implements MethodInterface
 	 *
 	 * Change is not allowed.
 	 */
-	public function isChangeAllowed()
+	public function isChangeAllowed($type)
 	{
 		return false;
 	}
@@ -67,8 +69,12 @@ class Voucher implements MethodInterface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getNumberPadReplacementController()
+	public function getNumberPadReplacementController($type)
 	{
+		if (self::PAYMENT_TYPE_REFUND === $type) {
+			return null;
+		}
+
 		$reference = $this->_referenceParser->parse(
 			'Message:Mothership:Voucher::Controller:Epos#tenderVoucher'
 		);
