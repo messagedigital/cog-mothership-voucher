@@ -27,9 +27,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			Order\Entity\Item\Events::CREATE_PRE_PERSONALISATION_INSERTS => array(
-				array('generateVouchers'),
-			),
 			Order\Events::CREATE_END => array(
 				array('setUsedTimestamp'),
 			),
@@ -37,61 +34,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 				array('recalculateVouchers', -1000),
 			),
 		);
-	}
-
-	/**
-	 * Generate vouchers for any items added to an order that are voucher
-	 * products.
-	 *
-	 * The product ID for the item must be listed in the "product-ids" config
-	 * element in the "voucher" group.
-	 *
-	 * The voucher amount is set to the *list price* of the item, not the net
-	 * or gross amount.
-	 *
-	 * The voucher ID is then set as the personalisation key "voucher_id" on the
-	 * relevant item.
-	 *
-	 * The queries for adding the voucher are added to the same transaction as
-	 * the item creation queries.
-	 *
-	 * @param Order\Event\EntityEvent $event The event object
-	 */
-	public function generateVouchers(Order\Event\EntityEvent $event)
-	{
-		$item = $event->getEntity();
-
-		if (!($item instanceof Order\Entity\Item\Item)) {
-			return false;
-		}
-
-		$voucherProductIDs = $this->get('cfg')->voucher->productIDs;
-
-		// Skip if no voucher product IDs are defined in the config
-		if (!$voucherProductIDs || empty($voucherProductIDs)) {
-			return false;
-		}
-
-		// Cast voucher product IDs to an array
-		if (!is_array($voucherProductIDs)) {
-			$voucherProductIDs = array($voucherProductIDs);
-		}
-
-		if (!in_array($item->productID, $voucherProductIDs)) {
-			return false;
-		}
-
-		$voucher = new Voucher;
-		$voucher->currencyID      = $item->order->currencyID;
-		$voucher->amount          = $item->listPrice;
-		$voucher->id              = $this->get('voucher.id_generator')->generate();
-		$voucher->purchasedAsItem = $item;
-
-		$create = $this->get('voucher.create');
-		$create->setTransaction($event->getTransaction());
-		$create->create($voucher);
-
-		$item->personalisation->voucher_id = $voucher->id;
 	}
 
 	/**
