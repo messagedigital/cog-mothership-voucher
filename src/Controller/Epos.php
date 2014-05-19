@@ -5,8 +5,9 @@ namespace Message\Mothership\Voucher\Controller;
 use Message\Mothership\Voucher\Voucher;
 
 use Message\Mothership\Epos\Branch;
+use Message\Mothership\Commerce\Payment\Payment;
 use Message\Mothership\Commerce\Order\Order;
-use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
+use Message\Mothership\Commerce\Order\Entity\Payment\Payment as OrderPayment;
 
 use Message\Cog\Controller\Controller;
 use Message\Cog\HTTP\Request;
@@ -141,7 +142,7 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 			$payment->reference = $voucher->id;
 			$payment->amount    = min($voucher->getBalance(), $order->getOrder()->getAmountDue());
 
-			$order->addEntity('payments', $payment);
+			$order->addEntity('payments', new OrderPayment($payment));
 		}
 
 		$view = $this->forward('Message:Mothership:Voucher::Controller:Epos#tenderVoucher');
