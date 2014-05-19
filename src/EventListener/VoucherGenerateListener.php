@@ -91,7 +91,7 @@ class VoucherGenerateListener implements SubscriberInterface
 
 		$voucher = new Voucher;
 		$voucher->currencyID      = $item->order->currencyID;
-		$voucher->amount          = $item->listPrice;
+		$voucher->amount          = $item->actualPrice;
 		$voucher->id              = $this->_idGenerator->generate();
 		$voucher->purchasedAsItem = $item;
 
