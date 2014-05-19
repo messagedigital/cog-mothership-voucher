@@ -85,5 +85,10 @@ class VoucherGenerated implements TemplateInterface
 			$builder->append(chr(27) . '@'); //  ESC @ / RESET
 			$builder->barcode($voucher->id, $builder::BARCODE_CODE39, false);
 		});
+
+		if ($voucher->expiresAt) {
+			$builder->append("\n\n");
+			$builder->split('Expires at:', $voucher->expiresAt->format('h:ia d/m/Y'));
+		}
 	}
 }
