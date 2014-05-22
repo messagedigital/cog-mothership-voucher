@@ -5,6 +5,7 @@ namespace Message\Mothership\Voucher\Bootstrap;
 use Message\Mothership\Voucher;
 
 use Message\Cog\Bootstrap\ServicesInterface;
+use Message\Cog\AssetManagement\FileReferenceAsset;
 
 class Services implements ServicesInterface
 {
@@ -60,6 +61,18 @@ class Services implements ServicesInterface
 
 		$services['voucher.form.epos.remove'] = $services->factory(function() {
 			return new Voucher\Form\Epos\VoucherRemove;
+		});
+
+		$services->extend('asset.manager', function($manager, $c) {
+			if ($manager->has('epos_extra')) {
+				$collection = $manager->get('epos_extra');
+				$collection->add(new FileReferenceAsset(
+					$c['reference_parser'],
+					'@Message:Mothership:Voucher::resources:assets:js:epos.js'
+				));
+			}
+
+			return $manager;
 		});
 
 		if (isset($services['epos.tender.methods'])) {
