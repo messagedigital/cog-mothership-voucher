@@ -7,6 +7,7 @@ use Message\Mothership\Voucher\Create;
 use Message\Mothership\Voucher\IdGenerator;
 
 use Message\Mothership\Commerce\Order;
+use Message\Mothership\Commerce\Refund;
 
 use Message\Cog\Event\EventListener;
 use Message\Cog\Event\SubscriberInterface;
@@ -34,7 +35,7 @@ class VoucherGenerateListener implements SubscriberInterface
 			Order\Entity\Item\Events::CREATE_PRE_PERSONALISATION_INSERTS => array(
 				array('generateForSales'),
 			),
-			Order\Events::ENTITY_CREATE => array(
+			Refund\Events::CREATE_START => array(
 				array('generateForVoucherRefunds'),
 			),
 		);
@@ -105,20 +106,19 @@ class VoucherGenerateListener implements SubscriberInterface
 	 * Generate a voucher for a new refund with a method of "voucher" and set
 	 * the generated voucher code to the refund reference.
 	 *
-	 * @param Transaction\Event $event
+	 * @param Refund\Event\TransactionalRefundEvent $event
 	 */
-	public function generateForVoucherRefunds(Order\Event\EntityEvent $event)
+	public function generateForVoucherRefunds(Refund\Event\TransactionalRefundEvent $event)
 	{
-		$refund = $event->getEntity();
+		$refund = $event->getRefund();
 
-		// Skip unless the entity is a refund with a method of "voucher"
-		if (!($refund instanceof Order\Entity\Refund\Refund)
-		 || 'voucher' !== $refund->method->getName()) {
+		// Skip unless the refund is using the "voucher" method
+		if ('voucher' !== $refund->method->getName()) {
 			return false;
 		}
 
 		$voucher             = new Voucher;
-		$voucher->currencyID = $refund->order->currencyID;
+		$voucher->currencyID = $refund->currencyID;
 		$voucher->amount     = $refund->amount;
 		$voucher->id         = $this->_idGenerator->generate();
 
@@ -126,5 +126,7 @@ class VoucherGenerateListener implements SubscriberInterface
 		$this->_create->create($voucher);
 
 		$refund->reference = $voucher->id;
+
+		$event->setRefund($refund);
 	}
 }
