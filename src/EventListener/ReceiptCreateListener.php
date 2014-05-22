@@ -5,9 +5,11 @@ namespace Message\Mothership\Voucher\EventListener;
 use Message\Mothership\Epos\Branch;
 use Message\Mothership\Epos\Receipt;
 
+use Message\Mothership\Commerce\Refund\Refund as BaseRefund;
 use Message\Mothership\Commerce\Order\Transaction;
 use Message\Mothership\Commerce\Order\Order;
 use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
+use Message\Mothership\Commerce\Order\Entity\Refund\Refund as OrderRefund;
 use Message\Mothership\Commerce\Order\Entity\Item\Item;
 
 use Message\Cog\Event\EventListener as BaseListener;
@@ -28,7 +30,8 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 		return array(
 			Transaction\Events::CREATE_COMPLETE => array(
 				array('createVoucherUsageReceipt'),
-				array('createVoucherGeneratedReceipt'),
+				array('createVoucherGeneratedReceiptForVoucherPurchases'),
+				array('createVoucherGeneratedReceiptForVoucherRefunds'),
 			),
 		);
 	}
@@ -99,7 +102,7 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 	 *
 	 * @param Transaction\Event $event
 	 */
-	public function createVoucherGeneratedReceipt(Transaction\Event\Event $event)
+	public function createVoucherGeneratedReceiptForVoucherPurchases(Transaction\Event\Event $event)
 	{
 		$transaction = $event->getTransaction();
 
@@ -127,6 +130,8 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 				continue;
 			}
 
+			$receipts = $this->_createVoucherGeneratedReceipts($item->personalisation->get('voucher_id'));
+
 			$voucherID = $item->personalisation->get('voucher_id');
 			$voucher   = $voucherLoader->getByID($voucherID);
 
@@ -142,6 +147,63 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 
 				// Add the order receipt to the transaction
 				$transaction->records->add($orderReceipt);
+			}
+		}
+
+		// Save the updated transaction
+		$transactionEdit->save($transaction);
+	}
+
+	/**
+	 * Create a "voucher generated" receipt when a refund is made to the
+	 * "voucher" method.
+	 *
+	 * This event listens to the "create complete" event because we need the
+	 * order to have already been created in the database for the receipt so
+	 * we can get the order's ID and show it on the receipt.
+	 *
+	 * @param Transaction\Event $event
+	 */
+	public function createVoucherGeneratedReceiptForVoucherRefunds(Transaction\Event\Event $event)
+	{
+		$transaction = $event->getTransaction();
+
+		$receiptCreate      = $this->get('receipt.create');
+		$orderReceiptCreate = $this->get('receipt.create');
+		$transactionEdit    = $this->get('order.transaction.edit');
+		$voucherLoader      = $this->get('voucher.loader');
+		$template           = $this->get('receipt.templates')->get('voucher_generated');
+		$factory            = $this->get('receipt.factory');
+
+		$records = array_merge(
+			$transaction->records->getByType(BaseRefund::RECORD_TYPE),
+			$transaction->records->getByType(OrderRefund::RECORD_TYPE)
+		);
+
+		foreach ($records as $refund) {
+			if ('voucher' !== $refund->method->getName()
+			 || is_null($refund->reference)) {
+				continue;
+			}
+
+			$voucher = $voucherLoader->getByID($refund->reference);
+
+			$template->setVoucher($voucher);
+
+			$receipts = $factory->build($template);
+
+			foreach ($receipts as $receipt) {
+				if ($refund instanceof OrderRefund) {
+					$receipt = new Receipt\OrderEntity\Receipt($receipt);
+					$receipt->order = $refund->order;
+
+					$orderReceiptCreate->create($receipt);
+				}
+				else {
+					$receiptCreate->create($receipt);
+				}
+
+				$transaction->records->add($receipt);
 			}
 		}
 
