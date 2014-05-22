@@ -130,8 +130,6 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 				continue;
 			}
 
-			$receipts = $this->_createVoucherGeneratedReceipts($item->personalisation->get('voucher_id'));
-
 			$voucherID = $item->personalisation->get('voucher_id');
 			$voucher   = $voucherLoader->getByID($voucherID);
 
