@@ -169,7 +169,7 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 		$transaction = $event->getTransaction();
 
 		$receiptCreate      = $this->get('receipt.create');
-		$orderReceiptCreate = $this->get('receipt.create');
+		$orderReceiptCreate = $this->get('order.receipt.create');
 		$transactionEdit    = $this->get('order.transaction.edit');
 		$voucherLoader      = $this->get('voucher.loader');
 		$template           = $this->get('receipt.templates')->get('voucher_generated');
