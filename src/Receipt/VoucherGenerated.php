@@ -79,7 +79,7 @@ class VoucherGenerated implements TemplateInterface
 		$voucher = $this->_voucher;
 
 		$builder->justify($builder::JUSTIFY_CENTER, function($builder) use ($voucher) {
-			$builder->append($voucher->amount . $voucher->currencyID . ' Voucher' . "\n\n");
+			$builder->append(number_format($voucher->amount, 2) . $voucher->currencyID . ' Voucher' . "\n\n");
 			$builder->append(chr(29) . '!' . chr(34) . "\r\r"); // I think this makes font big
 			$builder->append(strtoupper($voucher->id) . "\n\n");
 			$builder->append(chr(27) . '@'); //  ESC @ / RESET
