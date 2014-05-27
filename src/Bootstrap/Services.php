@@ -12,7 +12,7 @@ class Services implements ServicesInterface
 	public function registerServices($services)
 	{
 		$services['voucher.loader'] = $services->factory(function($c) {
-			return new Voucher\Loader($c['db.query'], $c['order.item.loader'], $c['order.payment.loader']);
+			return new Voucher\Loader($c['db.query'], $c['order.item.loader'], $c['payment.loader']);
 		});
 
 		$services['voucher.create'] = $services->factory(function($c) {
