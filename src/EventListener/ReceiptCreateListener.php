@@ -6,9 +6,10 @@ use Message\Mothership\Epos\Branch;
 use Message\Mothership\Epos\Receipt;
 
 use Message\Mothership\Commerce\Refund\Refund as BaseRefund;
+use Message\Mothership\Commerce\Payment\Payment as BasePayment;
 use Message\Mothership\Commerce\Order\Transaction;
 use Message\Mothership\Commerce\Order\Order;
-use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
+use Message\Mothership\Commerce\Order\Entity\Payment\Payment as OrderPayment;
 use Message\Mothership\Commerce\Order\Entity\Refund\Refund as OrderRefund;
 use Message\Mothership\Commerce\Order\Entity\Item\Item;
 
@@ -27,18 +28,18 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 	 */
 	static public function getSubscribedEvents()
 	{
-		return array(
-			Transaction\Events::CREATE_COMPLETE => array(
-				array('createVoucherUsageReceipt'),
-				array('createVoucherGeneratedReceiptForVoucherPurchases'),
-				array('createVoucherGeneratedReceiptForVoucherRefunds'),
-			),
-		);
+		return [
+			Transaction\Events::CREATE_COMPLETE => [
+				['createVoucherUsageReceipt'],
+				['createVoucherGeneratedReceiptForVoucherPurchases'],
+				['createVoucherGeneratedReceiptForVoucherRefunds'],
+			],
+		];
 	}
 
 	/**
-	 * Create a "receipt usage" receipt for orders where a voucher has been used
-	 * as a payment method
+	 * Create a "receipt usage" receipt for transactions where a voucher has
+	 * been used as a payment method
 	 *
 	 * This event listens to the "create complete" event because we need the
 	 * order to have already been created in the database for the receipt so
@@ -50,42 +51,48 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 	{
 		$transaction = $event->getTransaction();
 
-		// Skip if the transaction is not of type "new order"
-		if (Transaction\Types::ORDER !== $transaction->type) {
-			return false;
-		}
-
-		$receiptCreate   = $this->get('order.receipt.create');
-		$transactionEdit = $this->get('order.transaction.edit');
-		$template        = $this->get('receipt.templates')->get('voucher_usage');
-		$factory         = $this->get('receipt.factory');
+		$orderReceiptCreate = $this->get('order.receipt.create');
+		$receiptCreate      = $this->get('receipt.create');
+		$transactionEdit    = $this->get('order.transaction.edit');
+		$template           = $this->get('receipt.templates')->get('voucher_usage');
+		$factory            = $this->get('receipt.factory');
 
 		$orders = $transaction->records->getByType(Order::RECORD_TYPE);
-		$order = array_shift($orders);
+		$order  = array_shift($orders);
 
 		// Skip if the order was not placed on EPOS
-		if ('epos' !== $order->type) {
+		if ($order instanceof Order && !in_array($order->type, ['epos', 'standalone-return'])) {
 			return false;
 		}
 
-		foreach ($transaction->records->getByType(Payment::RECORD_TYPE) as $payment) {
+		$records = array_merge(
+			$transaction->records->getByType(BasePayment::RECORD_TYPE),
+			$transaction->records->getByType(OrderPayment::RECORD_TYPE)
+		);
+
+		foreach ($records as $payment) {
 			if ('voucher' !== $payment->method->getName()) {
 				continue;
 			}
 
 			$template->setTransaction($transaction);
-			$template->setVoucherPayment($payment);
+			$template->setVoucherPayment($payment instanceof OrderPayment ? $payment->payment : $payment);
 
 			$receipts = $factory->build($template);
 
 			foreach ($receipts as $receipt) {
-				$orderReceipt = new Receipt\OrderEntity\Receipt($receipt);
-				$orderReceipt->order = $order;
+				if ($order instanceof Order) {
+					$receipt = new Receipt\OrderEntity\Receipt($receipt);
+					$receipt->order = $order;
 
-				$receiptCreate->create($orderReceipt);
+					$orderReceiptCreate->create($receipt);
+				}
+				else {
+					$receiptCreate->create($receipt);
+				}
 
 				// Add the order receipt to the transaction
-				$transaction->records->add($orderReceipt);
+				$transaction->records->add($receipt);
 			}
 		}
 

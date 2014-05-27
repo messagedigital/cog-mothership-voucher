@@ -10,7 +10,7 @@ use Message\Mothership\Epos\Receipt\Template\TemplateInterface;
 
 use Message\Mothership\Commerce\Order\Order;
 use Message\Mothership\Commerce\Order\Entity\Item\Item;
-use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
+use Message\Mothership\Commerce\Payment\Payment;
 
 /**
  * Receipt for when a voucher is used on a transaction as a form of tender.
@@ -97,10 +97,6 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 		$voucherCode    = $this->_voucherPayment->reference;
 		$paymentAmount  = $this->_voucherPayment->amount;
 
-		// Find the order from the transaction
-		$orders = $this->_transaction->records->getByType(Order::RECORD_TYPE);
-		$order  = array_shift($orders);
-
 		$builder->justify($builder::JUSTIFY_CENTER, function($builder) use ($voucherCode) {
 			$builder->append('VOUCHER ADJUSTMENT' . "\n\n");
 			$builder->append(chr(29) . '!' . chr(34) . "\r\r"); // I think this makes font big
@@ -114,24 +110,8 @@ class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterf
 		$builder->split('Previous balance:', number_format($this->_voucher->getBalance() + $paymentAmount, 2));
 		$builder->split('Adjustment:', number_format(-$paymentAmount, 2));
 
-		$builder->bold(function($builder) use ($order) {
+		$builder->bold(function($builder) {
 			$builder->split('New balance:', number_format($this->_voucher->getBalance(), 2));
 		});
-
-		$builder->append("\n\n");
-
-		$builder->justify($builder::JUSTIFY_CENTER, function($builder) use ($transaction, $order) {
-			$builder->bold(function($builder) {
-				$builder->softWrap(['Thank you for shopping at', $this->_merchantName]);
-			});
-
-			$builder->append('You were served today by ' . $transaction->authorship->createdUser()->forename . "\n\n");
-
-			$builder->append($transaction->authorship->createdAt()->format('H:i j F Y') . "\n");
-
-			$builder->append('Order #' . $order->id . "\n\n");
-		});
-
-		$builder->barcode($order->id, $builder::BARCODE_CODE39);
 	}
 }
