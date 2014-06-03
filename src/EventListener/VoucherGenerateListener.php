@@ -106,9 +106,9 @@ class VoucherGenerateListener implements SubscriberInterface
 	 * Generate a voucher for a new refund with a method of "voucher" and set
 	 * the generated voucher code to the refund reference.
 	 *
-	 * @param Refund\Event\TransactionalRefundEvent $event
+	 * @param Refund\Event\TransactionalEvent $event
 	 */
-	public function generateForVoucherRefunds(Refund\Event\TransactionalRefundEvent $event)
+	public function generateForVoucherRefunds(Refund\Event\TransactionalEvent $event)
 	{
 		$refund = $event->getRefund();
 

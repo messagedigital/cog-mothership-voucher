@@ -45,7 +45,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 *
 	 * @param Payment\Event\TransactionalEvent $event
 	 */
-	public function setUsedTimestamp(Payment\Event\TransactionalPaymentEvent $event)
+	public function setUsedTimestamp(Payment\Event\TransactionalEvent $event)
 	{
 		$payment       = $event->getPayment();
 		$voucherLoader = $this->get('voucher.loader');
