@@ -3,6 +3,7 @@
 namespace Message\Mothership\Voucher;
 
 use Message\Mothership\Commerce\Order;
+use Message\Mothership\Commerce\Payment;
 
 use Message\Cog\Event\SubscriberInterface;
 use Message\Cog\Event\EventListener as BaseListener;
@@ -27,10 +28,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			Order\Entity\Item\Events::CREATE_PRE_PERSONALISATION_INSERTS => array(
-				array('generateVouchers'),
-			),
-			Order\Events::CREATE_END => array(
+			Payment\Events::CREATE_START => array(
 				array('setUsedTimestamp'),
 			),
 			Order\Events::ASSEMBLER_UPDATE => array(
@@ -40,97 +38,40 @@ class EventListener extends BaseListener implements SubscriberInterface
 	}
 
 	/**
-	 * Generate vouchers for any items added to an order that are voucher
-	 * products.
+	 * Sets the "used" timestamp on vouchers that have been used entirely for
+	 * a payment.
 	 *
-	 * The product ID for the item must be listed in the "product-ids" config
-	 * element in the "voucher" group.
+	 * The timestamp is set to the "created at" timestamp for the payment.
 	 *
-	 * The voucher amount is set to the *list price* of the item, not the net
-	 * or gross amount.
-	 *
-	 * The voucher ID is then set as the personalisation key "voucher_id" on the
-	 * relevant item.
-	 *
-	 * The queries for adding the voucher are added to the same transaction as
-	 * the item creation queries.
-	 *
-	 * @param Order\Event\EntityEvent $event The event object
+	 * @param Payment\Event\TransactionalEvent $event
 	 */
-	public function generateVouchers(Order\Event\EntityEvent $event)
+	public function setUsedTimestamp(Payment\Event\TransactionalEvent $event)
 	{
-		$item = $event->getEntity();
-
-		if (!($item instanceof Order\Entity\Item\Item)) {
-			return false;
-		}
-
-		$voucherProductIDs = $this->get('cfg')->voucher->productIDs;
-
-		// Skip if no voucher product IDs are defined in the config
-		if (!$voucherProductIDs || empty($voucherProductIDs)) {
-			return false;
-		}
-
-		// Cast voucher product IDs to an array
-		if (!is_array($voucherProductIDs)) {
-			$voucherProductIDs = array($voucherProductIDs);
-		}
-
-		if (!in_array($item->productID, $voucherProductIDs)) {
-			return false;
-		}
-
-		$voucher = new Voucher;
-		$voucher->currencyID      = $item->order->currencyID;
-		$voucher->amount          = $item->listPrice;
-		$voucher->id              = $this->get('voucher.id_generator')->generate();
-		$voucher->purchasedAsItem = $item;
-
-		$create = $this->get('voucher.create');
-		$create->setTransaction($event->getTransaction());
-		$create->create($voucher);
-
-		$item->personalisation->voucher_id = $voucher->id;
-	}
-
-	/**
-	 * Sets the "used" timestamp on vouchers that have been used on an order,
-	 * only when the voucher has now been used up entirely.
-	 *
-	 * The timestamp is set to the "created at" timestamp for the order.
-	 *
-	 * @param Order\Event\TransactionalEvent $event
-	 */
-	public function setUsedTimestamp(Order\Event\TransactionalEvent $event)
-	{
-		$order         = $event->getOrder();
+		$payment       = $event->getPayment();
 		$voucherLoader = $this->get('voucher.loader');
 		$voucherEdit   = $this->get('voucher.edit');
 
 		// Set voucher edit decorator to use the transaction from the event
 		$voucherEdit->setTransaction($event->getTransaction());
 
-		foreach ($order->payments as $payment) {
-			// Skip if the payment isn't a voucher payment
-			if ('voucher' !== $payment->method->getName()) {
-				continue;
-			}
-
-			$voucher = $voucherLoader->getByID($payment->reference);
-
-			// Skip if the voucher could not be found
-			if (!($voucher instanceof Voucher)) {
-				continue;
-			}
-
-			// Skip if the voucher wasn't fully used
-			if ($payment->amount != $voucher->getBalance()) {
-				continue;
-			}
-
-			$voucherEdit->setUsed($voucher, $order->authorship->createdAt());
+		// Skip if the payment isn't a voucher payment
+		if ('voucher' !== $payment->method->getName()) {
+			return false;
 		}
+
+		$voucher = $voucherLoader->getByID($payment->reference);
+
+		// Skip if the voucher could not be found
+		if (!($voucher instanceof Voucher)) {
+			return false;
+		}
+
+		// Skip if the voucher wasn't fully used
+		if ($payment->amount != $voucher->getBalance()) {
+			return false;
+		}
+
+		$voucherEdit->setUsed($voucher, $payment->authorship->createdAt());
 	}
 
 	public function recalculateVouchers(Order\Event\AssemblerEvent $event)
@@ -143,12 +84,13 @@ class EventListener extends BaseListener implements SubscriberInterface
 		// Mark this listener as busy
 		$this->_busy = true;
 
-		$basket        = $event->getAssembler();
-		$order         = $basket->getOrder();
-		$method        = $this->get('order.payment.methods')->get('voucher');
-		$voucherLoader = $this->get('voucher.loader');
-		$leftToPay     = $order->totalGross;
-		$vouchers      = [];
+		$basket           = $event->getAssembler();
+		$order            = $basket->getOrder();
+		$method           = $this->get('order.payment.methods')->get('voucher');
+		$voucherLoader    = $this->get('voucher.loader');
+		$voucherValidator = $this->get('voucher.validator');
+		$leftToPay        = $order->totalGross;
+		$vouchers         = [];
 
 		// Grab the vouchers for all voucher payments
 		foreach ($order->payments->getByProperty('method', $method) as $payment) {
@@ -178,7 +120,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 			// If there is nothing left to pay or the voucher isn't usable, remove it
 			if ($leftToPay <= 0
-			 || !$voucher->isUsable()) {
+			 || !$voucherValidator->isUsable($voucher)) {
 				$basket->removeEntity('payments', $payment);
 
 				// Prevent further listeners from firing (a new event will be dispatched)
