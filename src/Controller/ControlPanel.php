@@ -43,7 +43,9 @@ class ControlPanel extends Controller
 
 	public function view($id)
 	{
-		$voucher = $this->get('voucher.loader')->getByID($id);
+		$voucher            = $this->get('voucher.loader')->getByID($id);
+		$orderPayments      = [];
+		$orderPaymentLoader = $this->get('order.payment.loader');
 
 		if (!($voucher instanceof Voucher)) {
 			$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', array(
@@ -53,8 +55,20 @@ class ControlPanel extends Controller
 			return $this->redirectToReferer();
 		}
 
+		foreach ($voucher->usage as $payment) {
+			try {
+				if ($orderPayment = $orderPaymentLoader->getByID($payment->id)) {
+					$orderPayments[$payment->id] = $orderPayments;
+				}
+			}
+			catch (\Exception $e) {
+
+			}
+		}
+
 		return $this->render('::control-panel:view', array(
-			'voucher' => $voucher,
+			'voucher'       => $voucher,
+			'orderPayments' => $orderPayments,
 		));
 	}
 

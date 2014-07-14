@@ -69,7 +69,7 @@
 				<thead>
 					<tr>
 						<th>Order</th>
-						<th>Customer</th>
+						<th>Created by</th>
 						<th>Order total</th>
 						<th>Amount used</th>
 					</tr>
@@ -77,10 +77,16 @@
 				<tbody>
 					{% for payment in voucher.usage %}
 					<tr>
-						<td><a href="{{ url('ms.commerce.order.detail.view', {orderID: payment.order.id}) }}">#{{ payment.order.id }}</a></td>
-						<td>{{ payment.order.user.getName }}</td>
-						<td>{{ payment.order.totalGross|price(payment.order.currencyID) }}</td>
-						<td>{{ payment.amount|price(payment.order.currencyID) }}</td>
+						<td>
+						{% if orderPayments[payment.id] %}
+						<a href="{{ url('ms.commerce.order.detail.view', {orderID: payment.order.id}) }}">#{{ payment.order.id }}</a>
+						{% else %}
+						N/A
+						{% endif %}
+						</td>
+						<td>{{ payment.authorship.createdUser.getName }}</td>
+						<td>{{ orderPayments[payment.id] ? payment.order.totalGross|price(payment.currencyID) : 'N/A' }}</td>
+						<td>{{ payment.amount|price(payment.currencyID) }}</td>
 					</tr>
 					{% endfor %}
 				</tbody>

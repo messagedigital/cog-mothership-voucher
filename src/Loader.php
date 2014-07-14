@@ -3,8 +3,7 @@
 namespace Message\Mothership\Voucher;
 
 use Message\Mothership\Commerce\Order\Entity\Item\Loader as ItemLoader;
-use Message\Mothership\Commerce\Order\Entity\Payment\Loader as PaymentLoader;
-use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
+use Message\Mothership\Commerce\Payment;
 
 use Message\Cog\DB;
 use Message\Cog\ValueObject\DateTimeImmutable;
@@ -20,7 +19,7 @@ class Loader
 	protected $_itemLoader;
 	protected $_paymentLoader;
 
-	public function __construct(DB\Query $query, ItemLoader $itemLoader, PaymentLoader $paymentLoader)
+	public function __construct(DB\Query $query, ItemLoader $itemLoader, Payment\Loader $paymentLoader)
 	{
 		$this->_query         = $query;
 		$this->_itemLoader    = $itemLoader;
@@ -119,7 +118,7 @@ class Loader
 
 			// Set the payments as the usage for the voucher
 			foreach ($payments as $payment) {
-				if ($payment instanceof Payment) {
+				if ($payment instanceof Payment\Payment) {
 					$vouchers[$key]->usage[] = $payment;
 				}
 			}

@@ -1,0 +1,34 @@
+<div class="tender-voucher">
+	{{ form_start(search_form, {attr: {id: 'find-voucher'}}) }}
+		{{ form_row(search_form.id )}}
+		<button type="submit">Search</button>
+	{{ form_end(search_form) }}
+
+	{% if found_voucher %}
+	<div class="result">
+		{{ form(found_voucher_form, {attr: {class: 'use'}}) }}
+		<ul>
+			<li><strong>{{ found_voucher.id }}</strong><em>Created on {{ found_voucher.authorship.createdAt|date('d/m/Y') }}</em></li>
+			<li></li>
+			<li><span>Original Value:</span> <span>{{ found_voucher.amount|price(found_voucher.currencyID) }}</span></li>
+			<li><span>Balance:</span> <span><b>{{ found_voucher.balance|price(found_voucher.currencyID) }}</b></span></li>
+		</ul>
+	</div>
+	{% endif %}
+
+	<ul class="payment-listing">
+		{% for voucher in vouchers %}
+		<li id="voucher-{{ voucher.id }}">
+			{{ form_start(voucher_remove_forms[voucher.id], {attr: {class: 'remove'}}) }}
+				<button type="submit">Remove</button>
+			{{ form_end(voucher_remove_forms[voucher.id]) }}
+			<ul>
+				<li><strong>{{ voucher.id }}</strong><em>Created on {{ voucher.authorship.createdAt|date('d/m/Y') }}</em></li>
+				<li></li>
+				<li><span>Original Value:</span> <span>{{ voucher.amount|price(voucher.currencyID) }}</span></li>
+				<li><span>Balance:</span> <span><b>{{ voucher.balance|price(voucher.currencyID) }}</b></span></li>
+			</ul>
+		</li>
+		{% endfor %}
+	</ul>
+</div>

@@ -32,11 +32,19 @@ class AddVoucher extends Controller
 	public function voucherProcess()
 	{
 		$form = $this->voucherForm();
+
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$voucher = $this->get('voucher.loader')->getByID($data['voucher']);
 
-			if ($voucher && $voucher->isUsable()) {
-
+			if (!$voucher) {
+				$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', array(
+					'%id%' => $data['voucher'],
+				)));
+			}
+			else if ($error = $this->get('voucher.validator')->getError($voucher)) {
+				$this->addFlash('error', $error);
+			}
+			else {
 				$paymentMethod = $this->get('order.payment.methods')->get('voucher');
 
 				if ($this->get('basket')->getOrder()->getAmountDue() >= $voucher->getBalance()) {
@@ -50,33 +58,6 @@ class AddVoucher extends Controller
 				)));
 
 				$this->get('basket')->addPayment($paymentMethod, $amount, $voucher->id);
-
-			} elseif ($voucher && $voucher->getUnusableReason() == $voucher::REASON_NO_BALANCE) {
-				$this->addFlash('error', $this->trans('ms.voucher.add.error.no-balance', array(
-					'%id%' => $voucher->id,
-				)));
-
-			} elseif ($voucher && $voucher->getUnusableReason() == $voucher::REASON_NOT_STARTED) {
-				$date = $voucher->startsAt->getTimestamp();
-				$this->addFlash('error', $this->trans('ms.voucher.add.error.not-started', array(
-					'%start_date%' => date("Y-m-d g:i a", $date),
-					'%id%' => $voucher->id,
-				)));
-
-			} elseif ($voucher && $voucher->getUnusableReason() == $voucher::REASON_EXPIRED) {
-				$this->addFlash('error', $this->trans('ms.voucher.add.error.expired', array(
-					'%id%' => $voucher->id,
-				)));
-
-			} elseif (!$voucher) {
-				$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', array(
-					'%id%' => $data['voucher'],
-				)));
-
-			} else {
-				$this->addFlash('error', $this->trans('ms.voucher.add.error.unusable', array(
-					'%id%' => $data['voucher'],
-				)));
 			}
 
 		} else {
