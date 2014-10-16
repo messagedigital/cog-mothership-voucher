@@ -7,10 +7,14 @@ use Message\Mothership\Voucher;
 use Message\Cog\Bootstrap\ServicesInterface;
 use Message\Cog\AssetManagement\FileReferenceAsset;
 
+use Message\Mothership\Report\Report\Collection as ReportCollection;
+
 class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
+		$this->registerReports($services);
+
 		$services['voucher.loader'] = $services->factory(function($c) {
 			return new Voucher\Loader($c['db.query'], $c['order.item.loader'], $c['payment.loader']);
 		});
@@ -97,5 +101,21 @@ class Services implements ServicesInterface
 				return $templates;
 			});
 		}
+	}
+
+	public function registerReports($services)
+	{
+		$services['voucher.voucher_summary_report'] = $services->factory(function($c) {
+			return new Voucher\Report\VoucherSummary($c['db.query.builder.factory']);
+		});
+
+		$services['voucher.reports'] = function($c) {
+			$reports = new ReportCollection;
+			$reports
+				->add($c['voucher.voucher_summary_report'])
+			;
+
+			return $reports;
+		};
 	}
 }
