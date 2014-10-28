@@ -97,5 +97,9 @@ class Services implements ServicesInterface
 				return $templates;
 			});
 		}
+
+		$services['voucher.form.create'] = $services->factory(function ($c) {
+			return new Voucher\Form\CreateForm;
+		});
 	}
 }
