@@ -36,4 +36,4 @@ ms.voucher:
       no-balance: Voucher '%id%' could not be applied to order - no remaining balance.
       not-started: Voucher '%id%' could not be applied to order - start date is '%start_date%'.
       expired: Voucher '%id%' could not be applied to order - code expired.
-      incompatible-currencies: Voucher '%id%' could not be applied to order - incorrect voucher currency.
+      order-not-valid: Voucher '%id%' could not be applied to order - voucher not valid on this order.

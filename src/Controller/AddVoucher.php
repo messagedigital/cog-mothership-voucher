@@ -35,19 +35,15 @@ class AddVoucher extends Controller
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$voucher = $this->get('voucher.loader')->getByID($data['voucher']);
+			$validator = $this->get('voucher.validator');
 
 			if (!$voucher) {
 				$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', array(
 					'%id%' => $data['voucher'],
 				)));
 			}
-			else if ($error = $this->get('voucher.validator')->getError($voucher)) {
+			else if ($error = $validator->getError($voucher, $this->get('basket')->getOrder())) {
 				$this->addFlash('error', $error);
-			}
-			else if ($this->get('basket')->getOrder()->currencyID !== $voucher->currencyID){
-				$this->addFlash('error', $this->trans('ms.voucher.add.error.incompatible-currencies', [
-						'%id%' => $data['voucher'],
-					]));
 			}
 			else {
 				$paymentMethod = $this->get('order.payment.methods')->get('voucher');

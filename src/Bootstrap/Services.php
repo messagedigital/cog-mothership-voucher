@@ -107,7 +107,7 @@ class Services implements ServicesInterface
 			return $c['db.query.builder']
 				->select('`product_id`')
 				->from('`product`')
-				->where("`type` = '" . VoucherType::VOUCHER_TYPE_NAME . "'")
+				->where("`type` = '" . VoucherType::TYPE_NAME . "'")
 				->getQuery()
 				->run()
 				->flatten();

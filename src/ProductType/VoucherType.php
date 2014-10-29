@@ -8,11 +8,11 @@ use Message\Cog\Field\Factory;
 
 class VoucherType implements ProductTypeInterface
 {
-	const VOUCHER_TYPE_NAME = 'voucher';
+	const TYPE_NAME = 'voucher';
 
 	public function getName()
 	{
-		return self::VOUCHER_TYPE_NAME;
+		return self::TYPE_NAME;
 	}
 
 	public function getDisplayName()

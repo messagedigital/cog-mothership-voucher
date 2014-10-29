@@ -3,6 +3,8 @@
 namespace Message\Mothership\Voucher;
 
 use Symfony\Component\Translation\TranslatorInterface;
+use Message\Mothership\Commerce\Order\Order;
+use Message\Mothership\Voucher\ProductType\VoucherType;
 
 /**
  * Validates vouchers and generates the relevant error strings if they are not
@@ -15,9 +17,10 @@ class Validator
 	const TRANS_KEY_NO_BALANCE  = 'ms.voucher.add.error.no-balance';
 	const TRANS_KEY_EXPIRED     = 'ms.voucher.add.error.expired';
 	const TRANS_KEY_NOT_STARTED = 'ms.voucher.add.error.not-started';
+	const TRANS_KEY_NOT_VALID_FOR_ORDER = 'ms.voucher.add.error.order-not-valid';
 
 	protected $_translator;
-
+	protected $_order;
 	/**
 	 * Constructor.
 	 *
@@ -26,6 +29,16 @@ class Validator
 	public function __construct(TranslatorInterface $translator)
 	{
 		$this->_translator = $translator;
+		$this->_order      = null;
+	}
+
+	/**
+	 * Set the order object
+	 * @param Order $order The order
+	 */
+	public function setOrder(Order $order)
+	{
+		$this->_order = $order;
 	}
 
 	/**
@@ -41,6 +54,33 @@ class Validator
 		return $this->hasBalance($voucher)
 			&& $this->isStarted($voucher)
 			&& $this->isNotExpired($voucher);
+	}
+
+	/**
+	 * Test whether a voucher is valid for an order
+	 * @param  Voucher $voucher The voucher
+	 * @param  Order   $order   The order to test
+	 * @return boolean          true if valid, false if not
+	 */
+	public function isValidForOrder(Voucher $voucher, Order $order)
+	{
+		$order = $order?:$this->_order;
+		if (!$order) {
+			return false;
+		}
+
+		$valid = false;
+		foreach ($order->getItems() as $item) {
+			if($item->getProduct()->type->getName() !== VoucherType::TYPE_NAME) {
+				$valid = true;
+			}			
+		}
+
+		if ($voucher->currencyID !== $order->currencyID) {
+			$valid = false;
+		}
+
+		return $valid;
 	}
 
 	/**
@@ -89,7 +129,7 @@ class Validator
 	 *
 	 * @return string|null
 	 */
-	public function getError(Voucher $voucher)
+	public function getError(Voucher $voucher, Order $order = null)
 	{
 		if (!$this->isStarted($voucher)) {
 			return $this->_translator->trans(self::TRANS_KEY_NOT_STARTED, [
@@ -106,6 +146,12 @@ class Validator
 
 		if (!$this->hasBalance($voucher)) {
 			return $this->_translator->trans(self::TRANS_KEY_NO_BALANCE, [
+				'%id%' => $voucher->id,
+			]);
+		}
+
+		if ($order !== null && !$this->isValidForOrder($voucher, $order)) {
+			return $this->_translator->trans(self::TRANS_KEY_NOT_VALID_FOR_ORDER, [
 				'%id%' => $voucher->id,
 			]);
 		}
