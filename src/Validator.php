@@ -20,7 +20,7 @@ class Validator
 	const TRANS_KEY_NOT_VALID_FOR_ORDER = 'ms.voucher.add.error.order-not-valid';
 
 	protected $_translator;
-	protected $_order;
+
 	/**
 	 * Constructor.
 	 *
@@ -29,16 +29,6 @@ class Validator
 	public function __construct(TranslatorInterface $translator)
 	{
 		$this->_translator = $translator;
-		$this->_order      = null;
-	}
-
-	/**
-	 * Set the order object
-	 * @param Order $order The order
-	 */
-	public function setOrder(Order $order)
-	{
-		$this->_order = $order;
 	}
 
 	/**

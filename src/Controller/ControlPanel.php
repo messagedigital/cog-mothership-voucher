@@ -136,8 +136,8 @@ class ControlPanel extends Controller
 	protected function _getCreateForm()
 	{
 		return $this->createForm($this->get('voucher.form.create'), null, [
-				'action' => $this->generateUrl('ms.cp.voucher.create.action'),
-				'method' => 'POST',
-			]);
+			'action' => $this->generateUrl('ms.cp.voucher.create.action'),
+			'method' => 'POST',
+		]);
 	}
 }

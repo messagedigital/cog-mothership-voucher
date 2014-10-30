@@ -13,21 +13,21 @@ class CreateForm extends AbstractType
 	{
 		// Commerce's currency select field
 		$builder->add('currency', 'currency_select', [
-				'constraints' => [
-					new Constraints\NotBlank,
-				],
-			]);
+			'constraints' => [
+				new Constraints\NotBlank,
+			],
+		]);
 
 		$builder->add('amount', 'number', [
-				'label' => 'ms.voucher.amount.label',
-				'precision' => 2,
-				'attr'     => [
-					'data-help-key' => 'ms.voucher.amount.help',
-				],
-				'constraints' => [
-					new Constraints\NotBlank,
-				],
-			]);
+			'label' => 'ms.voucher.amount.label',
+			'precision' => 2,
+			'attr'     => [
+				'data-help-key' => 'ms.voucher.amount.help',
+			],
+			'constraints' => [
+				new Constraints\NotBlank,
+			],
+		]);
 
 		$builder->add('startsAt', 'datetime', [
 			'label' => 'ms.voucher.starts.label',
