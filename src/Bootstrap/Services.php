@@ -105,14 +105,14 @@ class Services implements ServicesInterface
 
 	public function registerReports($services)
 	{
-		$services['voucher.voucher_summary_report'] = $services->factory(function($c) {
-			return new Voucher\Report\VoucherSummary($c['db.query.builder.factory'],$c['translator']);
+		$services['voucher.voucher_summary'] = $services->factory(function($c) {
+			return new Voucher\Report\VoucherSummary($c['db.query.builder.factory'],$c['translator'],$c['routing.generator']);
 		});
 
 		$services['voucher.reports'] = function($c) {
 			$reports = new ReportCollection;
 			$reports
-				->add($c['voucher.voucher_summary_report'])
+				->add($c['voucher.voucher_summary'])
 			;
 
 			return $reports;
