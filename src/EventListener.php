@@ -35,7 +35,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 			Order\Events::ASSEMBLER_UPDATE => array(
 				array('recalculateVouchers', -1000),
 			),
-			ReportEvents\ReportEvent::REGISTER_REPORTS => [
+			ReportEvents\Events::REGISTER_REPORTS => [
 				'registerReports'
 			],
 		);
