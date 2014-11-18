@@ -14,10 +14,11 @@ use Message\Mothership\Voucher\ProductType\VoucherType;
  */
 class Validator
 {
-	const TRANS_KEY_NO_BALANCE  = 'ms.voucher.add.error.no-balance';
-	const TRANS_KEY_EXPIRED     = 'ms.voucher.add.error.expired';
-	const TRANS_KEY_NOT_STARTED = 'ms.voucher.add.error.not-started';
-	const TRANS_KEY_NOT_VALID_FOR_ORDER = 'ms.voucher.add.error.order-not-valid';
+	const TRANS_KEY_NO_BALANCE             = 'ms.voucher.add.error.no-balance';
+	const TRANS_KEY_EXPIRED                = 'ms.voucher.add.error.expired';
+	const TRANS_KEY_NOT_STARTED            = 'ms.voucher.add.error.not-started';
+	const TRANS_KEY_NOT_VALID_FOR_ORDER    = 'ms.voucher.add.error.order-not-valid';
+	const TRANS_KEY_NOT_VALID_FOR_CURRENCY = 'ms.voucher.add.error.order-not-valid-currency';
 
 	protected $_translator;
 
@@ -66,10 +67,15 @@ class Validator
 			}			
 		}
 
+		return $valid;
+	}
+
+	public function isValidOnCurrency(Voucher $voucher, Order $order)
+	{
 		if ($voucher->currencyID !== $order->currencyID) {
 			$valid = false;
 		}
-
+		
 		return $valid;
 	}
 
@@ -142,6 +148,12 @@ class Validator
 
 		if ($order !== null && !$this->isValidForOrder($voucher, $order)) {
 			return $this->_translator->trans(self::TRANS_KEY_NOT_VALID_FOR_ORDER, [
+				'%id%' => $voucher->id,
+			]);
+		}
+
+		if (!$this->isValidOnCurrency($voucher, $order)) {
+			return $this->_translator->trans(self::TRANS_KEY_NOT_VALID_FOR_CURRENCY, [
 				'%id%' => $voucher->id,
 			]);
 		}
