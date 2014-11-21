@@ -18,7 +18,7 @@ class VoucherSummary extends AbstractReport
 		$this->displayName = 'Voucher Summary';
 		$this->reportGroup = 'Discounts & Vouchers';
 		$this->_charts = [new TableChart];
-		parent::__construct($builderFactory,$trans,$routingGenerator);
+		parent::__construct($builderFactory, $trans, $routingGenerator);
 	}
 
 	public function getCharts()
@@ -37,16 +37,16 @@ class VoucherSummary extends AbstractReport
 	public function getColumns()
 	{
 		$columns = [
-			['type' => 'string', 	'name' => "Voucher",	],
-			['type' => 'string',	'name' => "Order Purchased",	],
-			['type' => 'string',	'name' => "Created By",	],
-			['type' => 'number',	'name' => "Created",	],
-			['type' => 'number',	'name' => "Expires",	],
-			['type' => 'string',	'name' => "Currency",	],
-			['type' => 'number',	'name' => "Initial Value",],
-			['type' => 'number',	'name' => "Used",		],
-			['type' => 'number',	'name' => "Balance",	],
-			['type' => 'string',	'name' => "Status",		],
+			['type' => 'string', 'name' => "Voucher",         ],
+			['type' => 'string', 'name' => "Order Purchased", ],
+			['type' => 'string', 'name' => "Created By",      ],
+			['type' => 'number', 'name' => "Created",         ],
+			['type' => 'number', 'name' => "Expires",         ],
+			['type' => 'string', 'name' => "Currency",        ],
+			['type' => 'number', 'name' => "Initial Value",   ],
+			['type' => 'number', 'name' => "Used",            ],
+			['type' => 'number', 'name' => "Balance",         ],
+			['type' => 'string', 'name' => "Status",          ],
 		];
 
 		return json_encode($columns);
@@ -98,12 +98,25 @@ class VoucherSummary extends AbstractReport
 				'<a href ="'.$this->generateUrl('ms.cp.voucher.view', ['id' => $row->Code]).'">'.$row->Code.'</a>',
 				'<a href ="'.$this->generateUrl('ms.commerce.order.detail.view', ['orderID' => (int) $row->Order_Purchased]).'">'.$row->Order_Purchased.'</a>',
 				'<a href ="'.$this->generateUrl('ms.cp.user.admin.detail.edit', ['userID' => (int) $row->Created_By]).'">'.$row->Created_By_Name.'</a>',
-				[ 'v' => $row->Created, 'f' => date('Y-m-d H:i', $row->Created)],
-				[ 'v' => $row->Expires, 'f' => date('Y-m-d H:i', $row->Expires)],
+				[
+					'v' => $row->Created,
+					'f' => date('Y-m-d H:i', $row->Created)
+				],
+				[
+					'v' => $row->Expires,
+					'f' => date('Y-m-d H:i', $row->Expires)
+				],
 				$row->Currency,
-				[ 'v' => (float) $row->Value, 'f' => $row->Value],
-				[ 'v' => (float) $row->Used, 'f' => $row->Used],
-				[ 'v' => (float) $row->Balance, 'f' => $row->Balance],
+				[
+					'v' => (float) $row->Value,
+					'f' => $row->Value],
+				[
+					'v' => (float) $row->Used,
+					'f' => $row->Used],
+				[
+					'v' => (float) $row->Balance,
+					'f' => $row->Balance
+				],
 				$row->Status,
 			];
 		}
