@@ -90,9 +90,17 @@ class VoucherGenerateListener implements SubscriberInterface
 			return false;
 		}
 
+		$unit = $item->getUnit();
+
 		$voucher = new Voucher;
-		$voucher->currencyID      = $item->order->currencyID;
-		$voucher->amount          = $item->actualPrice;
+		
+		if ($unit && isset($unit->options['currency']) && isset($unit->options['amount'])) {
+			$voucher->currencyID = $unit->options['currency'];
+			$voucher->amount     = $unit->options['amount'];
+		} else {
+			$voucher->currencyID      = $item->order->currencyID;
+			$voucher->amount          = $item->actualPrice;
+		}
 		$voucher->id              = $this->_idGenerator->generate();
 		$voucher->purchasedAsItem = $item;
 

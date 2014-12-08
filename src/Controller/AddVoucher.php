@@ -35,13 +35,14 @@ class AddVoucher extends Controller
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$voucher = $this->get('voucher.loader')->getByID($data['voucher']);
+			$validator = $this->get('voucher.validator');
 
 			if (!$voucher) {
 				$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', array(
 					'%id%' => $data['voucher'],
 				)));
 			}
-			else if ($error = $this->get('voucher.validator')->getError($voucher)) {
+			else if ($error = $validator->getError($voucher, $this->get('basket')->getOrder())) {
 				$this->addFlash('error', $error);
 			}
 			else {
