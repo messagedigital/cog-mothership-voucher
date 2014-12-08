@@ -3,6 +3,8 @@
 namespace Message\Mothership\Voucher;
 
 use Symfony\Component\Translation\TranslatorInterface;
+use Message\Mothership\Commerce\Order\Order;
+use Message\Mothership\Voucher\ProductType\VoucherType;
 
 /**
  * Validates vouchers and generates the relevant error strings if they are not
@@ -12,9 +14,11 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class Validator
 {
-	const TRANS_KEY_NO_BALANCE  = 'ms.voucher.add.error.no-balance';
-	const TRANS_KEY_EXPIRED     = 'ms.voucher.add.error.expired';
-	const TRANS_KEY_NOT_STARTED = 'ms.voucher.add.error.not-started';
+	const TRANS_KEY_NO_BALANCE             = 'ms.voucher.add.error.no-balance';
+	const TRANS_KEY_EXPIRED                = 'ms.voucher.add.error.expired';
+	const TRANS_KEY_NOT_STARTED            = 'ms.voucher.add.error.not-started';
+	const TRANS_KEY_NOT_VALID_FOR_ORDER    = 'ms.voucher.add.error.order-not-valid';
+	const TRANS_KEY_NOT_VALID_FOR_CURRENCY = 'ms.voucher.add.error.order-not-valid-currency';
 
 	protected $_translator;
 
@@ -41,6 +45,38 @@ class Validator
 		return $this->hasBalance($voucher)
 			&& $this->isStarted($voucher)
 			&& $this->isNotExpired($voucher);
+	}
+
+	/**
+	 * Test whether a voucher is valid for an order
+	 * @param  Voucher $voucher The voucher
+	 * @param  Order   $order   The order to test
+	 * @return boolean          true if valid, false if not
+	 */
+	public function isValidForOrder(Voucher $voucher, Order $order)
+	{
+		$order = $order?:$this->_order;
+		if (!$order) {
+			return false;
+		}
+
+		$valid = false;
+		foreach ($order->getItems() as $item) {
+			if($item->getProduct()->type->getName() !== VoucherType::TYPE_NAME) {
+				$valid = true;
+			}			
+		}
+
+		return $valid;
+	}
+
+	public function isValidOnCurrency(Voucher $voucher, Order $order)
+	{
+		if ($voucher->currencyID !== $order->currencyID) {
+			$valid = false;
+		}
+		
+		return $valid;
 	}
 
 	/**
@@ -89,7 +125,7 @@ class Validator
 	 *
 	 * @return string|null
 	 */
-	public function getError(Voucher $voucher)
+	public function getError(Voucher $voucher, Order $order = null)
 	{
 		if (!$this->isStarted($voucher)) {
 			return $this->_translator->trans(self::TRANS_KEY_NOT_STARTED, [
@@ -106,6 +142,18 @@ class Validator
 
 		if (!$this->hasBalance($voucher)) {
 			return $this->_translator->trans(self::TRANS_KEY_NO_BALANCE, [
+				'%id%' => $voucher->id,
+			]);
+		}
+
+		if ($order !== null && !$this->isValidForOrder($voucher, $order)) {
+			return $this->_translator->trans(self::TRANS_KEY_NOT_VALID_FOR_ORDER, [
+				'%id%' => $voucher->id,
+			]);
+		}
+
+		if (!$this->isValidOnCurrency($voucher, $order)) {
+			return $this->_translator->trans(self::TRANS_KEY_NOT_VALID_FOR_CURRENCY, [
 				'%id%' => $voucher->id,
 			]);
 		}
