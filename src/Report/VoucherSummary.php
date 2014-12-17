@@ -34,8 +34,8 @@ class VoucherSummary extends AbstractReport
 	 */
 	public function getCharts()
 	{
-		$data = $this->_dataTransform($this->_getQuery()->run());
-		$columns = $this->getColumns();
+		$data = $this->_dataTransform($this->_getQuery()->run(), "json");
+		$columns = $this->_parseColumns($this->getColumns());
 
 		foreach ($this->_charts as $chart) {
 			$chart->setColumns($columns);
@@ -48,24 +48,22 @@ class VoucherSummary extends AbstractReport
 	/**
 	 * Set columns for use in reports.
 	 *
-	 * @return String  Returns columns in JSON format.
+	 * @return array  Returns array of columns as keys with format for Google Charts as the value.
 	 */
 	public function getColumns()
 	{
-		$columns = [
-			['type' => 'string', 'name' => "Voucher",         ],
-			['type' => 'string', 'name' => "Order Purchased", ],
-			['type' => 'string', 'name' => "Created By",      ],
-			['type' => 'number', 'name' => "Created",         ],
-			['type' => 'number', 'name' => "Expires",         ],
-			['type' => 'string', 'name' => "Currency",        ],
-			['type' => 'number', 'name' => "Initial Value",   ],
-			['type' => 'number', 'name' => "Used",            ],
-			['type' => 'number', 'name' => "Balance",         ],
-			['type' => 'string', 'name' => "Status",          ],
+		return [
+			'Voucher'         => 'string',
+			'Order Purchased' => 'string',
+			'Created By'      => 'string',
+			'Created'         => 'number',
+			'Expires'         => 'number',
+			'Currency'        => 'string',
+			'Initial Value'   => 'number',
+			'Used'            => 'number',
+			'Balance'         => 'number',
+			'Status'          => 'string',
 		];
-
-		return json_encode($columns);
 	}
 
 	/**
@@ -73,7 +71,7 @@ class VoucherSummary extends AbstractReport
 	 *
 	 * @return Query
 	 */
-	private function _getQuery()
+	protected function _getQuery()
 	{
 		$queryBuilder = $this->_builderFactory->getQueryBuilder();
 
@@ -118,38 +116,58 @@ class VoucherSummary extends AbstractReport
 	 *
 	 * @return String|Array  Returns columns as string in JSON format or array.
 	 */
-	private function _dataTransform($data)
+	protected function _dataTransform($data, $output = null)
 	{
 		$result = [];
 
-		foreach ($data as $row) {
-			$result[] = [
-				'<a href ="'.$this->generateUrl('ms.cp.voucher.view', ['id' => $row->Code]).'">'.$row->Code.'</a>',
-				'<a href ="'.$this->generateUrl('ms.commerce.order.detail.view', ['orderID' => (int) $row->Order_Purchased]).'">'.$row->Order_Purchased.'</a>',
-				'<a href ="'.$this->generateUrl('ms.cp.user.admin.detail.edit', ['userID' => (int) $row->Created_By]).'">'.$row->Created_By_Name.'</a>',
-				[
-					'v' => $row->Created,
-					'f' => date('Y-m-d H:i', $row->Created)
-				],
-				[
-					'v' => $row->Expires,
-					'f' => date('Y-m-d H:i', $row->Expires)
-				],
-				$row->Currency,
-				[
-					'v' => (float) $row->Value,
-					'f' => $row->Value],
-				[
-					'v' => (float) $row->Used,
-					'f' => $row->Used],
-				[
-					'v' => (float) $row->Balance,
-					'f' => $row->Balance
-				],
-				$row->Status,
-			];
-		}
+		if ($output === "json") {
 
-		return json_encode($result);
+			foreach ($data as $row) {
+				$result[] = [
+					'<a href ="'.$this->generateUrl('ms.cp.voucher.view', ['id' => $row->Code]).'">'.$row->Code.'</a>',
+					'<a href ="'.$this->generateUrl('ms.commerce.order.detail.view', ['orderID' => (int) $row->Order_Purchased]).'">'.$row->Order_Purchased.'</a>',
+					'<a href ="'.$this->generateUrl('ms.cp.user.admin.detail.edit', ['userID' => (int) $row->Created_By]).'">'.$row->Created_By_Name.'</a>',
+					[
+						'v' => $row->Created,
+						'f' => date('Y-m-d H:i', $row->Created)
+					],
+					[
+						'v' => $row->Expires,
+						'f' => date('Y-m-d H:i', $row->Expires)
+					],
+					$row->Currency,
+					[
+						'v' => (float) $row->Value,
+						'f' => $row->Value],
+					[
+						'v' => (float) $row->Used,
+						'f' => $row->Used],
+					[
+						'v' => (float) $row->Balance,
+						'f' => $row->Balance
+					],
+					$row->Status,
+				];
+			}
+			return json_encode($result);
+
+		} else {
+
+			foreach ($data as $row) {
+				$result[] = [
+					$row->Code,
+					$row->Order_Purchased,
+					$row->Created_By,
+					date('Y-m-d H:i', $row->Created),
+					date('Y-m-d H:i', $row->Expires),
+					$row->Currency,
+					$row->Value,
+					$row->Used,
+					$row->Balance,
+					$row->Status,
+				];
+			}
+			return $result;
+		}
 	}
 }
