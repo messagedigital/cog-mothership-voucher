@@ -30,7 +30,7 @@ class VoucherSummary extends AbstractReport
 	 * Retrieves JSON representation of the data and columns.
 	 * Applies data to chart types set on report.
 	 *
-	 * @return Array  Returns all types of chart set on report with appropriate data.
+	 * @return array  Returns all types of chart set on report with appropriate data.
 	 */
 	public function getCharts()
 	{
@@ -114,7 +114,7 @@ class VoucherSummary extends AbstractReport
 	 * @param  $data    DB\Result  The data from the report query.
 	 * @param  $output  String     The type of output required.
 	 *
-	 * @return String|Array  Returns columns as string in JSON format or array.
+	 * @return string|array  Returns data as string in JSON format or array.
 	 */
 	protected function _dataTransform($data, $output = null)
 	{
