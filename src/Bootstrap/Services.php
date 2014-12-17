@@ -6,6 +6,7 @@ use Message\Mothership\Voucher;
 
 use Message\Cog\Bootstrap\ServicesInterface;
 use Message\Cog\AssetManagement\FileReferenceAsset;
+use Message\Mothership\Voucher\ProductType\VoucherType;
 
 use Message\Mothership\Report\Report\Collection as ReportCollection;
 
@@ -101,6 +102,20 @@ class Services implements ServicesInterface
 				return $templates;
 			});
 		}
+
+		$services['voucher.form.create'] = $services->factory(function ($c) {
+			return new Voucher\Form\CreateForm;
+		});
+
+		$services['voucher.product_ids'] = $services->factory(function ($c) {
+			return $c['db.query.builder']
+				->select('`product_id`')
+				->from('`product`')
+				->where("`type` = '" . VoucherType::TYPE_NAME . "'")
+				->getQuery()
+				->run()
+				->flatten();
+		});
 	}
 
 	public function registerReports($services)
