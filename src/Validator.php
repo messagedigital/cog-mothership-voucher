@@ -73,10 +73,10 @@ class Validator
 	public function isValidOnCurrency(Voucher $voucher, Order $order)
 	{
 		if ($voucher->currencyID !== $order->currencyID) {
-			$valid = false;
+			return false;
 		}
 		
-		return $valid;
+		return true;
 	}
 
 	/**
