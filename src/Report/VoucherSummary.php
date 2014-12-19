@@ -128,11 +128,11 @@ class VoucherSummary extends AbstractReport
 					'<a href ="'.$this->generateUrl('ms.commerce.order.detail.view', ['orderID' => (int) $row->Order_Purchased]).'">'.$row->Order_Purchased.'</a>',
 					'<a href ="'.$this->generateUrl('ms.cp.user.admin.detail.edit', ['userID' => (int) $row->Created_By]).'">'.$row->Created_By_Name.'</a>',
 					[
-						'v' => $row->Created,
+						'v' => (int) $row->Created,
 						'f' => date('Y-m-d H:i', $row->Created)
 					],
 					[
-						'v' => $row->Expires,
+						'v' => (int) $row->Expires,
 						'f' => date('Y-m-d H:i', $row->Expires)
 					],
 					$row->Currency,
