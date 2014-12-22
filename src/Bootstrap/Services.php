@@ -112,5 +112,11 @@ class Services implements ServicesInterface
 				->run()
 				->flatten();
 		});
+
+		$services['product.types'] = $services->extend('product.types', function ($types, $c) {
+			$types->add(new Voucher\ProductType\VoucherType);
+
+			return $types;
+		});
 	}
 }
