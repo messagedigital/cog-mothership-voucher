@@ -7,6 +7,7 @@ use Message\Mothership\Commerce\Payment;
 
 use Message\Cog\Event\SubscriberInterface;
 use Message\Cog\Event\EventListener as BaseListener;
+use Message\Mothership\Report\Event as ReportEvents;
 
 /**
  * Event listeners for voucher functionality.
@@ -34,6 +35,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			Order\Events::ASSEMBLER_UPDATE => array(
 				array('recalculateVouchers', -1000),
 			),
+			ReportEvents\Events::REGISTER_REPORTS => [
+				'registerReports'
+			],
 		);
 	}
 
@@ -150,5 +154,12 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 		// Release this listener
 		$this->_busy = false;
+	}
+
+	public function registerReports(ReportEvents\BuildReportCollectionEvent $event)
+	{
+		foreach ($this->get('voucher.reports') as $report) {
+			$event->registerReport($report);
+		}
 	}
 }
