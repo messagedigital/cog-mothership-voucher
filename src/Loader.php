@@ -56,7 +56,7 @@ class Loader
 			->getQueryBuilder()
 			->select('voucher_id')
 			->from('voucher')
-			->where('user_id IS NULL')
+			->where('used_at IS NULL')
 			->where('(expires_at IS NULL OR expires_at > UNIX_TIMESTAMP())')
 			->getQuery()
 			->run()
