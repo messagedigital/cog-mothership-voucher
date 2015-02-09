@@ -11,6 +11,7 @@ use Message\Mothership\Commerce\Refund;
 
 use Message\Cog\Event\EventListener;
 use Message\Cog\Event\SubscriberInterface;
+use Message\Mothership\Voucher\Loader as VoucherLoader;
 
 /**
  * Event listeners for generating vouchers.
@@ -24,7 +25,8 @@ class VoucherGenerateListener implements SubscriberInterface
 {
 	protected $_create;
 	protected $_idGenerator;
-	protected $_voucherProductIDs;
+	protected $_voucherProductIDs = null;
+	protected $_voucherLoader;
 
 	/**
 	 * {@inheritDoc}
@@ -48,11 +50,18 @@ class VoucherGenerateListener implements SubscriberInterface
 	 * @param IdGenerator $idGenerator Voucher ID generator
 	 * @param array       $voucherProductIDs Voucher ID generator
 	 */
-	public function __construct(Create $create, IdGenerator $idGenerator, array $voucherProductIDs)
+	public function __construct(Create $create, IdGenerator $idGenerator, VoucherLoader $voucherLoader)
 	{
 		$this->_create            = $create;
 		$this->_idGenerator       = $idGenerator;
-		$this->_voucherProductIDs = $voucherProductIDs;
+		$this->_voucherLoader     = $voucherLoader;
+	}
+
+	private function _loadProductIDs()
+	{
+		if($this->voucherProductIDs === null) {
+			$this->_voucherProductIDs = $this->_voucherLoader->getProductIds();
+		}
 	}
 
 	/**
@@ -75,6 +84,8 @@ class VoucherGenerateListener implements SubscriberInterface
 	 */
 	public function generateForSales(Order\Event\EntityEvent $event)
 	{
+		$this->_loadProductIDs();
+
 		$item = $event->getEntity();
 
 		if (!($item instanceof Order\Entity\Item\Item)) {

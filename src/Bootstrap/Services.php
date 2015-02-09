@@ -17,7 +17,7 @@ class Services implements ServicesInterface
 		$this->registerReports($services);
 
 		$services['voucher.loader'] = $services->factory(function($c) {
-			return new Voucher\Loader($c['db.query'], $c['order.item.loader'], $c['payment.loader']);
+			return new Voucher\Loader($c['db.query.builder.factory'], $c['order.item.loader'], $c['payment.loader']);
 		});
 
 		$services['voucher.create'] = $services->factory(function($c) {
@@ -107,6 +107,10 @@ class Services implements ServicesInterface
 			return new Voucher\Form\CreateForm;
 		});
 
+		/**
+		 * @deprecated Use $c['voucher.loader']->getProductIDs().
+		 * Really you shouldn't need to get these ever anyway.
+		 */
 		$services['voucher.product_ids'] = $services->factory(function ($c) {
 			return $c['db.query.builder']
 				->select('`product_id`')
