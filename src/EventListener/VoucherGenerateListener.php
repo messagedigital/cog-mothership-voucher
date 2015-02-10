@@ -25,7 +25,7 @@ class VoucherGenerateListener implements SubscriberInterface
 {
 	protected $_create;
 	protected $_idGenerator;
-	protected $_voucherProductIDs = null;
+	protected $_voucherProductIDs;
 	protected $_voucherLoader;
 
 	/**
@@ -59,7 +59,7 @@ class VoucherGenerateListener implements SubscriberInterface
 
 	private function _loadProductIDs()
 	{
-		if($this->voucherProductIDs === null) {
+		if(null === $this->_voucherProductIDs) {
 			$this->_voucherProductIDs = $this->_voucherLoader->getProductIDs();
 		}
 	}
