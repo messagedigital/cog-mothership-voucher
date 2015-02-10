@@ -60,7 +60,7 @@ class VoucherGenerateListener implements SubscriberInterface
 	private function _loadProductIDs()
 	{
 		if($this->voucherProductIDs === null) {
-			$this->_voucherProductIDs = $this->_voucherLoader->getProductIds();
+			$this->_voucherProductIDs = $this->_voucherLoader->getProductIDs();
 		}
 	}
 
