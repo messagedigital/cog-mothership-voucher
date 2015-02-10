@@ -7,6 +7,7 @@ use Message\Mothership\Commerce\Payment;
 
 use Message\Cog\DB;
 use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\Mothership\Voucher\ProductType\VoucherType;
 
 /**
  * Face-value voucher loader.
@@ -15,13 +16,13 @@ use Message\Cog\ValueObject\DateTimeImmutable;
  */
 class Loader
 {
-	protected $_query;
+	protected $_qbFactory;
 	protected $_itemLoader;
 	protected $_paymentLoader;
 
-	public function __construct(DB\Query $query, ItemLoader $itemLoader, Payment\Loader $paymentLoader)
+	public function __construct(DB\QueryBuilderFactory $query, ItemLoader $itemLoader, Payment\Loader $paymentLoader)
 	{
-		$this->_query         = $query;
+		$this->_qbFactory     = $query;
 		$this->_itemLoader    = $itemLoader;
 		$this->_paymentLoader = $paymentLoader;
 	}
@@ -29,6 +30,17 @@ class Loader
 	public function getByID($id)
 	{
 		return $this->_load($id, false);
+	}
+
+	public function getProductIDs() {
+		return $this->_qbFactory->getQueryBuilder()
+			->select('`product_id`')
+			->from('`product`')
+			->where("`type` = '" . VoucherType::TYPE_NAME . "'")
+			->getQuery()
+			->run()
+			->flatten()
+		;
 	}
 
 	/**
@@ -39,15 +51,16 @@ class Loader
 	 */
 	public function getOutstanding()
 	{
-		$result = $this->_query->run('
-			SELECT
-				voucher_id
-			FROM
-				voucher
-			WHERE
-				used_at IS NULL
-			AND (expires_at IS NULL OR expires_at > UNIX_TIMESTAMP())
-		');
+
+		$result = $this->_qbFactory
+			->getQueryBuilder()
+			->select('voucher_id')
+			->from('voucher')
+			->where('used_at IS NULL')
+			->where('(expires_at IS NULL OR expires_at > UNIX_TIMESTAMP())')
+			->getQuery()
+			->run()
+		;
 
 		return $this->_load($result->flatten(), true);
 	}
@@ -62,16 +75,16 @@ class Loader
 			return $alwaysReturnArray ? array() : false;
 		}
 
-		$result = $this->_query->run('
-			SELECT
-				*,
-				voucher_id  AS id,
-				currency_id AS currencyID
-			FROM
-				voucher
-			WHERE
-				voucher_id IN (?sj)
-		', array($ids));
+		$result = $this->_qbFactory
+			->getQueryBuilder()
+			->select('*')
+			->select('voucher_id AS id')
+			->select('currency_id AS currencyID')
+			->from('voucher')
+			->where('voucher_id IN (?sj)', [$ids])
+			->getQuery()
+			->run()
+		;
 
 		if (0 === count($result)) {
 			return $alwaysReturnArray ? array() : false;
