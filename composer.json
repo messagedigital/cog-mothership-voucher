@@ -1,38 +1,40 @@
 {
-	"name": "message/cog-mothership-voucher",
-	"description": "Cog module for face-value vouchers functionality for Mothership Commerce",
-	"keywords": ["commerce", "mothership", "voucher", "credit note", "gift voucher", "money", "cog"],
-	"homepage": "http://message.co.uk",
-	"license": "proprietary",
-	"authors": [
-		{
-			"name" : "The Message Development Team",
-			"email": "dev@message.co.uk"
-		}
-	],
-	"support": {
-		"wiki"  : "http://server.local/wiki/projects/cog",
-		"issues": "http://github.com/messagedigital/cog-mothership-vouchers/issues"
-	},
-	"autoload": {
-		"psr-4": {
-			"Message\\Mothership\\Voucher\\"      : "src",
-			"Message\\Mothership\\Voucher\\Test\\": "tests"
-		}
-	},
-	"repositories": [
-		{
-			"type": "composer",
-			"url" : "http://packages.message.co.uk"
-		}
-	],
-	"require": {
-		"php": ">=5.4.0",
-
-		"message/cog"                    : "~3.0",
-		"message/cog-mothership-commerce": "~3.0 | ~4.0"
-	},
-	"suggest": {
-                "message/cog-mothership-reports" : "Module for displaying reports"
-	}
+  "name": "mothership-ec/cog-mothership-voucher",
+  "description": "Cog module for face-value vouchers functionality for Mothership Commerce",
+  "keywords": [
+    "commerce",
+    "mothership",
+    "voucher",
+    "credit note",
+    "gift voucher",
+    "money",
+    "cog"
+  ],
+  "homepage": "http://mothership.ec",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "The Mothership Development Team",
+      "email": "dev@mothership.ec"
+    }
+  ],
+  "support": {
+    "wiki": "http://wiki.mothership.ec/Voucher_module",
+    "issues": "http://github.com/mothership-ec/cog-mothership-vouchers/issues"
+  },
+  "autoload": {
+    "psr-4": {
+      "Message\\Mothership\\Voucher\\": "src",
+      "Message\\Mothership\\Voucher\\Test\\": "tests"
+    }
+  },
+  "require": {
+    "php": ">=5.4.0",
+    
+    "mothership-ec/cog"                     : "~4.0",
+    "mothership-ec/cog-mothership-commerce" : "~5.0",
+    "mothership-ec/cog-mothership-reports"  : "~2.0"
+  },
+  "suggest": {
+  }
 }
