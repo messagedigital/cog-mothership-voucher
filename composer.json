@@ -11,7 +11,7 @@
     "cog"
   ],
   "homepage": "http://mothership.ec",
-  "license": "proprietary",
+  "license": "GPL-3.0+",
   "authors": [
     {
       "name": "The Mothership Development Team",
