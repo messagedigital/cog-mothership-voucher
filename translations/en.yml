@@ -38,3 +38,13 @@ ms.voucher:
       expired: Voucher '%id%' could not be applied to order - code expired.
       order-not-valid: Voucher '%id%' could not be applied to order - voucher not valid on this order.
       order-not-valid-currency: Voucher '%id%' could not be applied to order - voucher not valid in this currency.
+  evoucher:
+    email:
+      subject: Thank you for purchasing an electronic gift voucher
+      message:
+        start: |
+          Hello %user%
+
+          You have been sent a %siteName% gift voucher for the amount of:
+        end: |
+          To redeem this certificate please visit %url% and place the products you wish to order in your basket. At checkout enter the gift voucher code below:

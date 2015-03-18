@@ -2,9 +2,12 @@
 
 namespace Message\Mothership\Voucher;
 
+use Message\Mothership\Voucher\Event;
+
 use Message\User\UserInterface;
 
 use Message\Cog\DB;
+use Message\Cog\Event\Dispatcher;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
 /**
@@ -18,6 +21,8 @@ class Create implements DB\TransactionalInterface
 	protected $_loader;
 	protected $_currentUser;
 
+	private $_dispatcher;
+
 	protected $_idLength;
 	protected $_expiryInterval;
 
@@ -27,12 +32,14 @@ class Create implements DB\TransactionalInterface
 	 * @param DB\Query      $query       Database query instance
 	 * @param Loader        $loader      Voucher loader
 	 * @param UserInterface $currentUser The currently logged-in user
+	 * @param Dispatcher    $dispatcher  The dispatcher to fire the event
 	 */
-	public function __construct(DB\Query $query, Loader $loader, UserInterface $currentUser)
+	public function __construct(DB\Query $query, Loader $loader, UserInterface $currentUser, Dispatcher $dispatcher)
 	{
 		$this->_query       = $query;
 		$this->_loader      = $loader;
 		$this->_currentUser = $currentUser;
+		$this->_dispatcher  = $dispatcher;
 	}
 
 	/**
@@ -142,6 +149,11 @@ class Create implements DB\TransactionalInterface
 			'currencyID'        => $voucher->currencyID,
 			'amount'            => $voucher->amount,
 		));
+
+		$this->_dispatcher->dispatch(
+			Event\Events::VOUCHER_CREATE,
+			new Event\VoucherEvent($voucher)
+		);
 
 		// If the query was replaced with a transaction, just return the voucher
 		if ($this->_query instanceof DB\Transaction) {
