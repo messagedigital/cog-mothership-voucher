@@ -45,8 +45,7 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 
 	public function setVoucherItemStatus(Order\Event\Event $event)
 	{
-		if ($this->_eVouchersDisabled())
-		{
+		if ($this->_eVouchersDisabled()) {
 			return;
 		}
 
