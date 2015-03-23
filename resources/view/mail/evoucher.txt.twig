@@ -1,0 +1,14 @@
+-----------------------------------------------------------------
+{{ app.cfg.app.name }} GIFT VOUCHER
+-----------------------------------------------------------------
+
+{{ 'ms.voucher.evoucher.email.message.start' | trans({'%user%': user.getName, '%siteName%': app.cfg.app.name}) }}
+
+{{ voucher.amount | price(voucher.currency) }}
+
+-----------------------------------------------------------------
+
+{{ 'ms.voucher.evoucher.email.message.end' | trans({'%url%': app.cfg.app.baseUrl}) }}
+
+{{ voucher.id }}
+

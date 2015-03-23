@@ -84,21 +84,25 @@ class VoucherGenerateListener implements SubscriberInterface
 	 */
 	public function generateForSales(Order\Event\EntityEvent $event)
 	{
-		$this->_loadProductIDs();
-
 		$item = $event->getEntity();
 
 		if (!($item instanceof Order\Entity\Item\Item)) {
 			return false;
 		}
 
-		// Skip if no voucher product IDs are defined in the config
-		if (!$this->_voucherProductIDs || empty($this->_voucherProductIDs)) {
-			return false;
-		}
+		$isVoucher = $item->getProduct()->getType()->getName() === 'voucher';
 
-		if (!in_array($item->productID, $this->_voucherProductIDs)) {
-			return false;
+		if (false === $isVoucher) {
+			$this->_loadProductIDs();
+
+			// Skip if no voucher product IDs are defined in the config
+			if (!$this->_voucherProductIDs || empty($this->_voucherProductIDs)) {
+				return false;
+			}
+
+			if (!in_array($item->productID, $this->_voucherProductIDs)) {
+				return false;
+			}
 		}
 
 		$unit = $item->getUnit();

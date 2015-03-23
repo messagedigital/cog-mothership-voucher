@@ -31,6 +31,7 @@ class Events implements EventsInterface, ContainerAwareInterface
 	public function registerEvents($dispatcher)
 	{
 		$dispatcher->addSubscriber(new Voucher\EventListener);
+		$dispatcher->addSubscriber(new Voucher\EventListener\EVoucherListener);
 
 		$dispatcher->addListener(Event::BUILD_MAIN_MENU, function($event) {
 			$event->addItem('ms.cp.voucher.index', 'Vouchers', array(
