@@ -4,8 +4,6 @@ This cogule provides face-value voucher functionality for Mothership commerce sy
 
 ## Todo
 
-- Implement electronic gift vouchers (products tagged for automatic dispatch?)
-	- event listener to email e-vouchers if purchased (can come later)
 - Stop discounts being applied to voucher products
 	- How to abstract this from commerce sensibly?
 	- New event listener to clear the discount amounts?
