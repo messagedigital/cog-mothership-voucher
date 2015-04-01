@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1
+
+- Fix issue where EPOS orders would break on voucher validation by passing validator the epos order
+
 ## 2.1.0
 
 - Electronic vouchers
