@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Controllers for voucher-specific functionality in EPOS.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ *
+ * @deprecated  Controller moved to EPOS module
  */
 class Epos extends Controller implements Branch\BranchTillAwareInterface
 {
