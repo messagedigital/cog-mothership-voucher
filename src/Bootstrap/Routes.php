@@ -20,7 +20,7 @@ class Routes implements RoutesInterface
 			->setMethod('POST');
 
 		$router['ms.cp.voucher']->add('ms.cp.voucher.invalidate', '/{id}/invalidate', 'Message:Mothership:Voucher::Controller:ControlPanel#invalidate')
-			->setRequirement('id', '[A-Z0-9]+')
+			->setRequirement('id', '[A-Z0-9/.]+')
 			->setMethod('DELETE');
 
 		$router['ms.cp.voucher']->add('ms.cp.voucher.view', '/{id}', 'Message:Mothership:Voucher::Controller:ControlPanel#view');
