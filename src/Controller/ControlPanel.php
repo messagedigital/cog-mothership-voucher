@@ -43,6 +43,7 @@ class ControlPanel extends Controller
 
 	public function view($id)
 	{
+		$id = urldecode($id);
 		$voucher            = $this->get('voucher.loader')->getByID($id);
 		$orderPayments      = [];
 		$orderPaymentLoader = $this->get('order.payment.loader');

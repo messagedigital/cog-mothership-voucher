@@ -12,6 +12,8 @@ use Symfony\Component\HttpKernel\Controller\ControllerReference;
  * Voucher tender method.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ *
+ * @deprecated Moved to EPOS module, use Message\Mothership\Epos\TenderMethod\Voucher instead
  */
 class Voucher implements MethodInterface
 {

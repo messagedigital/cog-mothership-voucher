@@ -32,6 +32,7 @@ class Epos extends Controller implements Branch\BranchTillAwareInterface
 	 */
 	public function setBranch(Branch\BranchInterface $branch)
 	{
+		trigger_error('This controller is deprecated', E_USER_DEPRECATED);
 		$this->_branch = $branch;
 	}
 

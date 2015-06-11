@@ -16,24 +16,36 @@ use Message\Mothership\Voucher\ProductType\VoucherType;
  */
 class Loader
 {
-	protected $_qbFactory;
-	protected $_itemLoader;
-	protected $_paymentLoader;
+	private $_queryBuilderFactory;
+	private $_queryBuilder;
 
-	public function __construct(DB\QueryBuilderFactory $query, ItemLoader $itemLoader, Payment\Loader $paymentLoader)
+	private $_itemLoader;
+	private $_paymentLoader;
+	private $_returnAsArray;
+
+	public function __construct(DB\QueryBuilderFactory $queryBuilderFactory, ItemLoader $itemLoader, Payment\Loader $paymentLoader)
 	{
-		$this->_qbFactory     = $query;
-		$this->_itemLoader    = $itemLoader;
-		$this->_paymentLoader = $paymentLoader;
+		$this->_queryBuilderFactory = $queryBuilderFactory;
+		$this->_itemLoader          = $itemLoader;
+		$this->_paymentLoader       = $paymentLoader;
 	}
 
-	public function getByID($id)
+	public function getByID($id, $returnAsArray = false)
 	{
-		return $this->_load($id, false);
+		$this->_setQueryBuilder();
+
+		$this->_returnAsArray = $returnAsArray || is_array($id);
+
+		$this->_queryBuilder
+			->where('voucher.voucher_id IN (?sj)', [(array) $id])
+		;
+
+		return $this->_load();
 	}
 
-	public function getProductIDs() {
-		return $this->_qbFactory->getQueryBuilder()
+	public function getProductIDs()
+	{
+		return $this->_queryBuilderFactory->getQueryBuilder()
 			->select('`product_id`')
 			->from('`product`')
 			->where("`type` = '" . VoucherType::TYPE_NAME . "'")
@@ -51,43 +63,36 @@ class Loader
 	 */
 	public function getOutstanding()
 	{
+		$this->_setQueryBuilder();
 
-		$result = $this->_qbFactory
-			->getQueryBuilder()
-			->select('voucher_id')
-			->from('voucher')
-			->where('used_at IS NULL')
-			->where('(expires_at IS NULL OR expires_at > UNIX_TIMESTAMP())')
-			->getQuery()
-			->run()
+		$this->_returnAsArray = true;
+
+		$this->_queryBuilder
+			->where('voucher.used_at IS NULL')
+			->where('(voucher.expires_at IS NULL OR voucher.expires_at > UNIX_TIMESTAMP())')
 		;
 
-		return $this->_load($result->flatten(), true);
+		return $this->_load();
 	}
 
-	public function _load($ids, $alwaysReturnArray = false)
+	private function _setQueryBuilder()
 	{
-		if (!is_array($ids)) {
-			$ids = (array) $ids;
-		}
-
-		if (!$ids) {
-			return $alwaysReturnArray ? array() : false;
-		}
-
-		$result = $this->_qbFactory
+		$this->_queryBuilder = $this->_queryBuilderFactory
 			->getQueryBuilder()
-			->select('*')
-			->select('voucher_id AS id')
-			->select('currency_id AS currencyID')
+			->select(['*', 'voucher.voucher_id AS id', 'voucher.currency_id AS currencyID'])
 			->from('voucher')
-			->where('voucher_id IN (?sj)', [$ids])
+		;
+	}
+
+	private function _load()
+	{
+		$result = $this->_queryBuilder
 			->getQuery()
 			->run()
 		;
 
 		if (0 === count($result)) {
-			return $alwaysReturnArray ? array() : false;
+			return $this->_returnAsArray ? [] : false;
 		}
 
 		$vouchers = $result->bindTo('Message\\Mothership\\Voucher\\Voucher');
@@ -139,6 +144,8 @@ class Loader
 			$return[$row->id] = $vouchers[$key];
 		}
 
-		return $alwaysReturnArray || count($return) > 1 ? $return : reset($return);
+		$this->_queryBuilder = null;
+
+		return $this->_returnAsArray || count($return) > 1 ? $return : reset($return);
 	}
 }
