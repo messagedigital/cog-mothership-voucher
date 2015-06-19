@@ -36,6 +36,10 @@ class Loader
 
 		$this->_returnAsArray = $returnAsArray || is_array($id);
 
+		if (empty($id)) {
+			return $this->_returnAsArray ? [] : false;
+		}
+
 		$this->_queryBuilder
 			->where('voucher.voucher_id IN (?sj)', [(array) $id])
 		;
