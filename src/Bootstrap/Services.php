@@ -84,14 +84,6 @@ class Services implements ServicesInterface
 			return $manager;
 		});
 
-//		if (isset($services['epos.tender.methods'])) {
-//			$services->extend('epos.tender.methods', function($methods, $c) {
-//				$methods->add(new Voucher\TenderMethod\Voucher($c['reference_parser']));
-//
-//				return $methods;
-//			});
-//		}
-
 		if (isset($services['receipt.templates'])) {
 			$services->extend('receipt.templates', function($templates, $c) {
 				$templates->add(new Voucher\Receipt\VoucherUsage(
