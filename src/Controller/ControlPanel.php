@@ -110,6 +110,8 @@ class ControlPanel extends Controller
 
 	public function invalidate($id)
 	{
+		$id = urldecode($id);
+
 		$voucher = $this->get('voucher.loader')->getByID($id);
 
 		$this->get('voucher.edit')->setExpiry($voucher, new \DateTime);
