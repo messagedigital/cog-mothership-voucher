@@ -23,7 +23,7 @@
 			<tbody>
 				{% for voucher in vouchers %}
 				<tr>
-					<td><a href="{{ url('ms.cp.voucher.view', {id : voucher.id}) }}">{{ voucher.id }}</a></td>
+					<td><a href="{{ url('ms.cp.voucher.view', {id : voucher.id | url_encode}) }}">{{ voucher.id }}</a></td>
 					<td>{{ voucher.authorship.createdAt|date }}</td>
 					<td>{{ voucher.amount|price(voucher.currencyID) }}</td>
 					<td>{{ voucher.getBalance()|price(voucher.currencyID) }}</td>
