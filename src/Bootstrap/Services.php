@@ -56,9 +56,9 @@ class Services implements ServicesInterface
 			return $methods;
 		});
 
-		$services['voucher.e_voucher.mailer'] = function($c) {
+		$services['voucher.e_voucher.mailer'] = $services->factory(function($c) {
 			return new Voucher\Mailer\EVoucherMailer($c['mail.dispatcher'], $c['mail.message'], $c['translator']);
-		};
+		});
 
 		$services['voucher.form.epos.search'] = $services->factory(function() {
 			return new Voucher\Form\Epos\VoucherSearch;
