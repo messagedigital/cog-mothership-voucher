@@ -43,7 +43,9 @@ class ControlPanel extends Controller
 
 	public function view($id)
 	{
+		// Some voucher codes have slashes in them so we need to encode/decode the ID
 		$id = urldecode($id);
+
 		$voucher            = $this->get('voucher.loader')->getByID($id);
 		$orderPayments      = [];
 		$orderPaymentLoader = $this->get('order.payment.loader');
@@ -108,6 +110,8 @@ class ControlPanel extends Controller
 
 	public function invalidate($id)
 	{
+		$id = urldecode($id);
+
 		$voucher = $this->get('voucher.loader')->getByID($id);
 
 		$this->get('voucher.edit')->setExpiry($voucher, new \DateTime);
