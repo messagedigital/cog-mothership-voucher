@@ -61,27 +61,21 @@ class Services implements ServicesInterface
 		});
 
 		$services['voucher.form.epos.search'] = $services->factory(function() {
+			trigger_error('The service `voucher.form.epos.search` is deprecated, use `epos.form.voucher.search` instead', E_USER_DEPRECATED);
+
 			return new Voucher\Form\Epos\VoucherSearch;
 		});
 
 		$services['voucher.form.epos.apply'] = $services->factory(function() {
+			trigger_error('The service `voucher.form.epos.apply` is deprecated, use `epos.form.voucher.apply` instead', E_USER_DEPRECATED);
+
 			return new Voucher\Form\Epos\VoucherApply;
 		});
 
 		$services['voucher.form.epos.remove'] = $services->factory(function() {
+			trigger_error('The service `voucher.form.epos.remove` is deprecated, use `epos.form.voucher.remove` instead', E_USER_DEPRECATED);
+
 			return new Voucher\Form\Epos\VoucherRemove;
-		});
-
-		$services->extend('asset.manager', function($manager, $c) {
-			if ($manager->has('epos_extra')) {
-				$collection = $manager->get('epos_extra');
-				$collection->add(new FileReferenceAsset(
-					$c['reference_parser'],
-					'@Message:Mothership:Voucher::resources:assets:js:epos.js'
-				));
-			}
-
-			return $manager;
 		});
 
 		if (isset($services['receipt.templates'])) {
