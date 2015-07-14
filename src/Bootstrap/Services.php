@@ -21,7 +21,7 @@ class Services implements ServicesInterface
 		});
 
 		$services['voucher.create'] = $services->factory(function($c) {
-			$create = new Voucher\Create($c['db.query'], $c['voucher.loader'], $c['user.current']);
+			$create = new Voucher\Create($c['db.query'], $c['voucher.loader'], $c['user.current'], $c['event.dispatcher']);
 
 			// If config is set for ID length, define it here
 			if ($idLength = $c['cfg']->voucher->idLength) {
@@ -55,6 +55,10 @@ class Services implements ServicesInterface
 
 			return $methods;
 		});
+
+		$services['voucher.e_voucher.mailer'] = function($c) {
+			return new Voucher\Mailer\EVoucherMailer($c['mail.dispatcher'], $c['mail.message'], $c['translator']);
+		};
 
 		$services['voucher.form.epos.search'] = $services->factory(function() {
 			return new Voucher\Form\Epos\VoucherSearch;

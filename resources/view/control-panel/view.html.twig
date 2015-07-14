@@ -8,7 +8,7 @@
 	<div class="title vouchers">
 		<h1>Voucher '{{ voucher.id }}' <span>{{ 'ms.voucher.expiry.label'|trans }} {{ voucher.expiresAt is empty ? 'Never' : voucher.expiresAt|date }}</span></h1>
 		<div class="controls">
-		    <form action="{{ url('ms.cp.voucher.invalidate', {id: voucher.id}) }}" method="post" id="delete-page">
+		    <form action="{{ url('ms.cp.voucher.invalidate', {id: (voucher.id | url_encode)}) }}" method="post" id="delete-page">
 		        <input type="hidden" name="_method" value="DELETE">
 		        <button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Invalidate Voucher'|trans }}</button>
 		    </form>
