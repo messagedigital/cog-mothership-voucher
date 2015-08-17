@@ -78,20 +78,6 @@ class Services implements ServicesInterface
 			return new Voucher\Form\Epos\VoucherRemove;
 		});
 
-		if (isset($services['receipt.templates'])) {
-			$services->extend('receipt.templates', function($templates, $c) {
-				$templates->add(new Voucher\Receipt\VoucherUsage(
-					$c['cfg']->merchant->companyName,
-					$c['voucher.loader']
-				));
-
-				$templates->add(new Voucher\Receipt\VoucherGenerated(
-					$c['cfg']->merchant->companyName
-				));
-
-				return $templates;
-			});
-		}
 
 		$services['voucher.form.create'] = $services->factory(function ($c) {
 			return new Voucher\Form\CreateForm;
