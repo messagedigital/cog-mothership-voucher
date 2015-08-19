@@ -30,7 +30,7 @@ class ControlPanel extends Controller
 			$voucher = $this->get('voucher.loader')->getByID($data['id']);
 
 			if ($voucher instanceof Voucher) {
-				return $this->redirectToRoute('ms.cp.voucher.view', array('id' => $voucher->id));
+				return $this->redirectToRoute('ms.cp.voucher.view', array('id' => urlencode($voucher->id)));
 			}
 
 			$this->addFlash('error', $this->trans('ms.voucher.voucher-not-found', array(
@@ -102,7 +102,7 @@ class ControlPanel extends Controller
 
 			$voucher = $this->get('voucher.create')->create($voucher);
 
-			return $this->redirectToRoute('ms.cp.voucher.view', array('id' => $voucher->id));
+			return $this->redirectToRoute('ms.cp.voucher.view', array('id' => urlencode($voucher->id)));
 		}
 
 		return $this->redirectToReferer();
