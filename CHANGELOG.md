@@ -24,6 +24,7 @@
 - Deprecated `Receipt\VoucherGenerated`, use `Message\Mothership\Epos\Receipt\Template\VoucherGenerated` in EPOS module instead
 - Deprecated `Receipt\VoucherUsage`, use `Message\Mothership\Epos\Receipt\Template\VoucherUsage` in EPOS module instead
 - Deprecated `TenderMethod\Voucher`, use `Message\Mothership\Epos\TenderMethod\Voucher` in EPOS module instead
+- `resources/assets/js/epos.js` file logs a deprecated error message, use `voucher.js` file in EPOS module instead
 
 ## 2.1.2
 
