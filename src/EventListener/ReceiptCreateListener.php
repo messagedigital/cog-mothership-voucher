@@ -20,6 +20,8 @@ use Message\Cog\Event\SubscriberInterface;
  * Event listeners for creating voucher receipts for transactions.
  *
  * @author Joe Holdcroft <joe@message.co.uk>
+ *
+ * @deprecated Moved to EPOS module, use Message\Mothership\Epos\EventListener\VoucherReceiptListener instead
  */
 class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 {
@@ -28,6 +30,7 @@ class ReceiptCreateListener extends BaseListener implements SubscriberInterface
 	 */
 	static public function getSubscribedEvents()
 	{
+		trigger_error('This event listener is deprecated', E_USER_DEPRECATED);
 		return [
 			Transaction\Events::CREATE_COMPLETE => [
 				['createVoucherUsageReceipt'],

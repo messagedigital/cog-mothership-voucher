@@ -18,9 +18,9 @@ class IdGenerator
 	/**
 	 * Constructor.
 	 *
-	 * @param Salt   $stringGenerator Random string generator
-	 * @param Loader $loader          Voucher loader
-	 * @param int    $length          String length of voucher IDs
+	 * @param StringGenerator $stringGenerator   Random string generator
+	 * @param Loader $loader                     Voucher loader
+	 * @param int $length                        String length of voucher IDs
 	 */
 	public function __construct(StringGenerator $stringGenerator, Loader $loader, $length)
 	{
