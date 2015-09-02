@@ -10,6 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 /**
  * Form for searching for a voucher when tendering a transaction in EPOS.
  *
+ * @deprecated Moved to EPOS module, use Message\Mothership\Epos\Form\Voucher\VoucherSearch instead
+ *
  * @author Joe Holdcroft <joe@message.co.uk>
  */
 class VoucherSearch extends AbstractType

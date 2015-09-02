@@ -44,10 +44,5 @@ class Events implements EventsInterface, ContainerAwareInterface
 			$this->_services['voucher.id_generator'],
 			$this->_services['voucher.loader']
 		));
-
-		// Only register the receipt create listener if EPOS is loaded
-		if ($this->_services['module.loader']->exists('Message\\Mothership\\Epos')) {
-			$dispatcher->addSubscriber(new Voucher\EventListener\ReceiptCreateListener);
-		}
 	}
 }
