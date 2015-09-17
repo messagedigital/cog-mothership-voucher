@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.1
+
+- URL encode voucher ID when redirecting from search
+- URL encode voucher ID when redirecting to newly created voucher page
+
 ## 2.2.0
 
 - Refactored `Loader` to only run one query when loading vouchers
