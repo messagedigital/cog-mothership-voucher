@@ -37,9 +37,11 @@ class IdGenerator
 	 */
 	public function generate()
 	{
+		$allowChars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
 		do {
-			$id = $this->_stringGenerator->setPattern('/^[A-HJ-KM-NP-Z2-9]+$/')->generate($this->_length);
-		} while($this->_idExists($id));
+			$id = $this->_stringGenerator->allowChars($allowChars)->generate($this->_length);
+		} while ($this->_idExists($id));
 
 		return $id;
 	}
