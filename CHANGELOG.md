@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.2
+
+- Resolve issue where unwanted characters would appear in voucher codes
+- Increased Cog dependency to 4.11
+
 ## 2.2.1
 
 - URL encode voucher ID when redirecting from search
