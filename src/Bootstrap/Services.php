@@ -56,56 +56,34 @@ class Services implements ServicesInterface
 			return $methods;
 		});
 
+<<<<<<< HEAD
 		$services['voucher.e_voucher.mailer'] = function($c) {
 			return new Voucher\Mailer\EVoucherMailer($c['mail.dispatcher'], $c['mail.message'], $c['translator']);
 		};
+=======
+		$services['voucher.e_voucher.mailer'] = $services->factory(function($c) {
+			return new Voucher\Mailer\EVoucherMailer($c['mail.dispatcher'], $c['mail.message'], $c['translator']);
+		});
+>>>>>>> develop
 
 		$services['voucher.form.epos.search'] = $services->factory(function() {
+			trigger_error('The service `voucher.form.epos.search` is deprecated, use `epos.form.voucher.search` instead', E_USER_DEPRECATED);
+
 			return new Voucher\Form\Epos\VoucherSearch;
 		});
 
 		$services['voucher.form.epos.apply'] = $services->factory(function() {
+			trigger_error('The service `voucher.form.epos.apply` is deprecated, use `epos.form.voucher.apply` instead', E_USER_DEPRECATED);
+
 			return new Voucher\Form\Epos\VoucherApply;
 		});
 
 		$services['voucher.form.epos.remove'] = $services->factory(function() {
+			trigger_error('The service `voucher.form.epos.remove` is deprecated, use `epos.form.voucher.remove` instead', E_USER_DEPRECATED);
+
 			return new Voucher\Form\Epos\VoucherRemove;
 		});
 
-		$services->extend('asset.manager', function($manager, $c) {
-			if ($manager->has('epos_extra')) {
-				$collection = $manager->get('epos_extra');
-				$collection->add(new FileReferenceAsset(
-					$c['reference_parser'],
-					'@Message:Mothership:Voucher::resources:assets:js:epos.js'
-				));
-			}
-
-			return $manager;
-		});
-
-		if (isset($services['epos.tender.methods'])) {
-			$services->extend('epos.tender.methods', function($methods, $c) {
-				$methods->add(new Voucher\TenderMethod\Voucher($c['reference_parser']));
-
-				return $methods;
-			});
-		}
-
-		if (isset($services['receipt.templates'])) {
-			$services->extend('receipt.templates', function($templates, $c) {
-				$templates->add(new Voucher\Receipt\VoucherUsage(
-					$c['cfg']->merchant->companyName,
-					$c['voucher.loader']
-				));
-
-				$templates->add(new Voucher\Receipt\VoucherGenerated(
-					$c['cfg']->merchant->companyName
-				));
-
-				return $templates;
-			});
-		}
 
 		$services['voucher.form.create'] = $services->factory(function ($c) {
 			return new Voucher\Form\CreateForm;

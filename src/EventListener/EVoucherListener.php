@@ -80,7 +80,15 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 		if ($controller) {
 			$controller = explode('\\', $controller);
 
+<<<<<<< HEAD
 			return (!empty($controller[2]) && $controller[2] === 'EPOS');
+=======
+			array_walk($controller, function (&$segment) {
+				$segment = strtolower($segment);
+			});
+
+			return in_array('epos', $controller);
+>>>>>>> develop
 		}
 
 		throw new \LogicException('No controller set on request');

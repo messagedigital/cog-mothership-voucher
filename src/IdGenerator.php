@@ -18,9 +18,9 @@ class IdGenerator
 	/**
 	 * Constructor.
 	 *
-	 * @param Salt   $stringGenerator Random string generator
-	 * @param Loader $loader          Voucher loader
-	 * @param int    $length          String length of voucher IDs
+	 * @param StringGenerator $stringGenerator   Random string generator
+	 * @param Loader $loader                     Voucher loader
+	 * @param int $length                        String length of voucher IDs
 	 */
 	public function __construct(StringGenerator $stringGenerator, Loader $loader, $length)
 	{
@@ -37,9 +37,11 @@ class IdGenerator
 	 */
 	public function generate()
 	{
+		$allowChars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+
 		do {
-			$id = $this->_stringGenerator->setPattern('/^[A-HJ-KM-NP-Z2-9]+$/')->generate($this->_length);
-		} while($this->_idExists($id));
+			$id = $this->_stringGenerator->allowChars($allowChars)->generate($this->_length);
+		} while ($this->_idExists($id));
 
 		return $id;
 	}

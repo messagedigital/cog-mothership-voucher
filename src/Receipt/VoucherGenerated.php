@@ -17,9 +17,9 @@ use Message\Mothership\Commerce\Order\Entity\Payment\Payment;
  *
  * Two copies are generated: one for the store, and one for the customer.
  *
- * @author Joe Holdcroft <joe@message.co.uk>
+ * @deprecated Moved to EPOS module, use Message\Mothership\Epos\Receipt\Template\VoucherGenerated instead
  *
- * @todo move the font size stuff to the buider
+ * @author Joe Holdcroft <joe@message.co.uk>
  */
 class VoucherGenerated implements TemplateInterface
 {

@@ -32,7 +32,11 @@ abstract class AbstractMailer
 	protected function _send()
 	{
 		$failed = [];
+<<<<<<< HEAD
 		$this->_mailer->Send($this->_message, $failed);
+=======
+		$this->_mailer->send($this->_message, $failed);
+>>>>>>> develop
 
 		if (count($failed) > 0) {
 			throw new \RuntimeException('Failed to send email to ' . implode(', ', $failed));

@@ -19,10 +19,9 @@ use Message\Mothership\Commerce\Payment\Payment;
  *
  * Two copies are generated: one for the store, and one for the customer.
  *
- * @author Joe Holdcroft <joe@message.co.uk>
+ * @deprecated Moved to EPOS module, use Message\Mothership\Epos\Receipt\Template\VoucherUsage instead
  *
- * @todo encapsulate receipt footer to avoid code duplication
- * @todo move the font size stuff to the buider
+ * @author Joe Holdcroft <joe@message.co.uk>
  */
 class VoucherUsage extends AbstractTransactionTemplate implements TemplateInterface
 {

@@ -1,4 +1,6 @@
 $(function() {
+	console.log('This javascript file is deprecated, use the voucher.js file in the EPOS module instead');
+
 	$('body').on('ready', '.tender-voucher', function() {
 		// Add a voucher returned from a search result
 		$(this).on('submit', '.result form.use', function() {
