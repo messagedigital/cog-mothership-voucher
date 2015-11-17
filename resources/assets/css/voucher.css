@@ -1,0 +1,54 @@
+/* Vouchers
+------------------------------------------------------------ */
+
+
+
+.vouchers.title .controls {
+	top: 14px;
+}
+
+.vouchers h2 {
+	float: left;
+	width: 100%;
+}
+
+.create-voucher {
+	display: block;
+}
+
+.notice {
+	clear: both;
+	margin: 10px 0px;
+}
+
+.voucher-details {
+	float: left;
+	margin: 0 0 10px 0;
+	list-style: none;
+}
+
+.voucher-details li {
+	float: left;
+	margin-bottom: 10px;
+	width: 100%;
+}
+
+.voucher-details li.grand-total {
+	padding-top: 10px;
+}
+
+.voucher-details span {
+	display: block;
+	float: left;
+	overflow: hidden;
+	width: 150px;
+	font-weight: normal;
+	font-family:'Proxima N W15 Smbd', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.voucher-details.col {
+	display: table-cell;
+	padding: 10px ;
+	width: 45%;
+
+}

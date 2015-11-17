@@ -32,6 +32,7 @@ abstract class AbstractMailer
 	protected function _send()
 	{
 		$failed = [];
+
 		$this->_mailer->send($this->_message, $failed);
 
 		if (count($failed) > 0) {
