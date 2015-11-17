@@ -56,15 +56,10 @@ class Services implements ServicesInterface
 			return $methods;
 		});
 
-<<<<<<< HEAD
-		$services['voucher.e_voucher.mailer'] = function($c) {
-			return new Voucher\Mailer\EVoucherMailer($c['mail.dispatcher'], $c['mail.message'], $c['translator']);
-		};
-=======
+
 		$services['voucher.e_voucher.mailer'] = $services->factory(function($c) {
 			return new Voucher\Mailer\EVoucherMailer($c['mail.dispatcher'], $c['mail.message'], $c['translator']);
 		});
->>>>>>> develop
 
 		$services['voucher.form.epos.search'] = $services->factory(function() {
 			trigger_error('The service `voucher.form.epos.search` is deprecated, use `epos.form.voucher.search` instead', E_USER_DEPRECATED);

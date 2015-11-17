@@ -1,7 +1,5 @@
 # Changelog
 
-<<<<<<< HEAD
-=======
 ## 2.2.2
 
 - Resolve issue where unwanted characters would appear in voucher codes
@@ -38,7 +36,6 @@
 - Deprecated `TenderMethod\Voucher`, use `Message\Mothership\Epos\TenderMethod\Voucher` in EPOS module instead
 - `resources/assets/js/epos.js` file logs a deprecated error message, use `voucher.js` file in EPOS module instead
 
->>>>>>> develop
 ## 2.1.2
 
 - Fix issue where vouchers with slashes and dots in the voucher code would break the URLs in the admin panel (note: vouchers theoretically *shouldn't* have these characters, see <a href="https://github.com/mothership-ec/cog/issues/449">this issue</a>)
