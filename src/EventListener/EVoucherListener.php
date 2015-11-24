@@ -25,8 +25,8 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 	{
 		return [
 			Order\Events::CREATE_COMPLETE => [
-				'setVoucherItemStatus',
 				'sendEVoucherOnOrderComplete',
+				'setVoucherItemStatus',
 			],
 		];
 	}
@@ -37,17 +37,33 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			return;
 		}
 
-		$vouchers = $this->_getVouchersFromItems($event->getOrder()->items);
+		$voucherItems = $this->_getVoucherItems($event->getOrder()->items);
 
-		foreach ($vouchers as $voucher) {
-			$user = $voucher->authorship->createdBy() ?: $event->getOrder()->user;
+		foreach ($voucherItems as $voucherItem) {
+			$user = $voucherItem->authorship->createdBy() ?: $event->getOrder()->user;
+
+			if (is_numeric($user)) {
+				$user = $this->get('user.loader')->getByID($user);
+			}
+
+			$voucherID = $voucherItem->personalisation->voucher_id;
+
+			if (!$voucherID) {
+				throw new \LogicException('Voucher ID could not be determined for item');
+			}
+
+			$voucher = $this->get('voucher.loader')->getByID($voucherID);
+
+			if (!$voucher) {
+				throw new \LogicException('Could not load voucher with ID `' . $voucherID . '`');
+			}
 
 			try {
 				if (!$user || $user instanceof AnonymousUser) {
 					throw new Exception\EVoucherSendException(
-						'Could not send e-voucher with ID of `' . $event->getVoucher()->id . '` as user is ' . ($user ? 'anonymous' : 'null'),
+						'Could not send e-voucher with ID of `' . $voucherID . '` as user is ' . ($user ? 'anonymous' : 'null'),
 						'ms.voucher.evoucher.error.email',
-						['%code%' => $event->getVoucher()->id]
+						['%code%' => $voucher->id]
 					);
 				}
 
@@ -63,6 +79,7 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 	/**
 	 * @deprecated Some gateways have problems with sending the email this early as they do not have access to the session
 	 *             in the callback. Use `sendEVoucherOnOrderComplete` instead
+	 *
 	 * @param Event\VoucherEvent $event
 	 */
 	public function sendEVoucher(Event\VoucherEvent $event)
@@ -90,7 +107,7 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			return;
 		}
 
-		$vouchers = $this->_getVouchersFromItems($event->getOrder()->items);
+		$vouchers = $this->_getVoucherItems($event->getOrder()->items);
 
 		if (!empty($vouchers)) {
 			$this->get('order.item.edit')->updateStatus($vouchers, Order\Statuses::RECEIVED);
@@ -101,7 +118,7 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 		}
 	}
 
-	private function _getVouchersFromItems(CollectionInterface $items)
+	private function _getVoucherItems(CollectionInterface $items)
 	{
 		$vouchers = [];
 
