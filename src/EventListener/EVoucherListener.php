@@ -58,7 +58,6 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			$message = $this->get('translator')->trans($e->getTranslation(), $e->getParams());
 			$this->get('http.session')->getFlashBag()->add('error', $message);
 			$this->get('log.errors')->warning($e->getMessage());
-			throw $e;
 		}
 	}
 
