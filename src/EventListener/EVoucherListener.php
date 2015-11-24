@@ -3,7 +3,9 @@
 namespace Message\Mothership\Voucher\EventListener;
 
 use Message\Mothership\Voucher\Event;
+use Message\Mothership\Voucher\Exception;
 use Message\Mothership\Commerce\Order;
+use Message\User\AnonymousUser;
 use Message\Cog\Event as CogEvent;
 
 /**
@@ -38,9 +40,23 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			return;
 		}
 
-		$user = $this->get('user.loader')->getByID($event->getVoucher()->authorship->createdBy());
+		try {
+			$user = $this->get('user.loader')->getByID($event->getVoucher()->authorship->createdBy());
 
-		$this->get('voucher.e_voucher.mailer')->sendVoucher($event->getVoucher(), $user);
+			if (!$user || $user instanceof AnonymousUser) {
+				throw new Exception\EVoucherSendException(
+					'Could not send e-voucher as user is ' . ($user ? 'anonymous' : 'null'),
+					'ms.voucher.evoucher.error.email',
+					['%code%' => $event->getVoucher()->id]
+				);
+			}
+
+			$this->get('voucher.e_voucher.mailer')->sendVoucher($event->getVoucher(), $user);
+		} catch (Exception\VoucherDisplayException $e) {
+			$message = $this->get('translator')->trans($e->getTranslation(), $e->getParams());
+			$this->get('http.session')->getFlashBag()->add('error', $message);
+			$this->get('log.errors')->warning($e->getMessage());
+		}
 	}
 
 	public function setVoucherItemStatus(Order\Event\Event $event)
