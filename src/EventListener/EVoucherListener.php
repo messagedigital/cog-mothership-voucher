@@ -5,6 +5,8 @@ namespace Message\Mothership\Voucher\EventListener;
 use Message\Mothership\Voucher\Event;
 use Message\Mothership\Voucher\Exception;
 use Message\Mothership\Commerce\Order;
+use Message\Mothership\Commerce\Order\Entity\CollectionInterface;
+use Message\Mothership\Commerce\Order\Entity\Item\Item;
 use Message\User\AnonymousUser;
 use Message\Cog\Event as CogEvent;
 
@@ -45,7 +47,7 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 
 			if (!$user || $user instanceof AnonymousUser) {
 				throw new Exception\EVoucherSendException(
-					'Could not send e-voucher as user is ' . ($user ? 'anonymous' : 'null'),
+					'Could not send e-voucher with ID of `' . $event->getVoucher()->id . '` as user is ' . ($user ? 'anonymous' : 'null'),
 					'ms.voucher.evoucher.error.email',
 					['%code%' => $event->getVoucher()->id]
 				);
@@ -56,6 +58,7 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			$message = $this->get('translator')->trans($e->getTranslation(), $e->getParams());
 			$this->get('http.session')->getFlashBag()->add('error', $message);
 			$this->get('log.errors')->warning($e->getMessage());
+			throw $e;
 		}
 	}
 
@@ -65,13 +68,7 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			return;
 		}
 
-		$vouchers = [];
-
-		foreach ($event->getOrder()->items as $item) {
-			if ($item->getProduct()->getType()->getName() === 'voucher') {
-				$vouchers[] = $item;
-			}
-		}
+		$vouchers = $this->_getVouchersFromItems($event->getOrder()->items);
 
 		if (!empty($vouchers)) {
 			$this->get('order.item.edit')->updateStatus($vouchers, Order\Statuses::RECEIVED);
@@ -80,6 +77,22 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 		if (count($vouchers) === count($event->getOrder()->items)) {
 			$this->get('order.edit')->updateStatus($event->getOrder(), Order\Statuses::RECEIVED);
 		}
+	}
+
+	private function _getVouchersFromItems(CollectionInterface $items)
+	{
+		$vouchers = [];
+
+		foreach ($items as $item) {
+			if (!$item instanceof Item) {
+				continue;
+			}
+			if ($item->getProduct()->getType()->getName() === 'voucher') {
+				$vouchers[] = $item;
+			}
+		}
+
+		return $vouchers;
 	}
 
 	private function _eVouchersDisabled()

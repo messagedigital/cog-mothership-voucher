@@ -5,13 +5,13 @@ namespace Message\Mothership\Voucher\EventListener;
 use Message\Mothership\Voucher\Voucher;
 use Message\Mothership\Voucher\Create;
 use Message\Mothership\Voucher\IdGenerator;
+use Message\Mothership\Voucher\Loader as VoucherLoader;
 
 use Message\Mothership\Commerce\Order;
 use Message\Mothership\Commerce\Refund;
 
-use Message\Cog\Event\EventListener;
+use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\Event\SubscriberInterface;
-use Message\Mothership\Voucher\Loader as VoucherLoader;
 
 /**
  * Event listeners for generating vouchers.
@@ -118,6 +118,7 @@ class VoucherGenerateListener implements SubscriberInterface
 		}
 		$voucher->id              = $this->_idGenerator->generate();
 		$voucher->purchasedAsItem = $item;
+		$voucher->authorship->create(new DateTimeImmutable, $item->order->user->id);
 
 		$this->_create->setTransaction($event->getTransaction());
 		$this->_create->create($voucher);
