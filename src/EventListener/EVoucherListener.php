@@ -24,16 +24,45 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 	static public function getSubscribedEvents()
 	{
 		return [
-			Event\Events::VOUCHER_CREATE => [
-				'sendEVoucher'
-			],
 			Order\Events::CREATE_COMPLETE => [
-				'setVoucherItemStatus'
+				'setVoucherItemStatus',
+				'sendEVoucherOnOrderComplete',
 			],
 		];
 	}
 
+	public function sendEVoucherOnOrderComplete(Order\Event\Event $event)
+	{
+		if ($this->_eVouchersDisabled()) {
+			return;
+		}
+
+		$vouchers = $this->_getVouchersFromItems($event->getOrder()->items);
+
+		foreach ($vouchers as $voucher) {
+			$user = $voucher->authorship->createdBy() ?: $event->getOrder()->user;
+
+			try {
+				if (!$user || $user instanceof AnonymousUser) {
+					throw new Exception\EVoucherSendException(
+						'Could not send e-voucher with ID of `' . $event->getVoucher()->id . '` as user is ' . ($user ? 'anonymous' : 'null'),
+						'ms.voucher.evoucher.error.email',
+						['%code%' => $event->getVoucher()->id]
+					);
+				}
+
+				$this->get('voucher.e_voucher.mailer')->sendVoucher($voucher, $user);
+			} catch (Exception\VoucherDisplayException $e) {
+				$message = $this->get('translator')->trans($e->getTranslation(), $e->getParams());
+				$this->get('http.session')->getFlashBag()->add('error', $message);
+				$this->get('log.errors')->warning($e->getMessage());
+			}
+		}
+	}
+
 	/**
+	 * @deprecated Some gateways have problems with sending the email this early as they do not have access to the session
+	 *             in the callback. Use `sendEVoucherOnOrderComplete` instead
 	 * @param Event\VoucherEvent $event
 	 */
 	public function sendEVoucher(Event\VoucherEvent $event)
@@ -42,23 +71,17 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			return;
 		}
 
-		try {
-			$user = $this->get('user.loader')->getByID($event->getVoucher()->authorship->createdBy());
+		$user = $this->get('user.loader')->getByID($event->getVoucher()->authorship->createdBy());
 
-			if (!$user || $user instanceof AnonymousUser) {
-				throw new Exception\EVoucherSendException(
-					'Could not send e-voucher with ID of `' . $event->getVoucher()->id . '` as user is ' . ($user ? 'anonymous' : 'null'),
-					'ms.voucher.evoucher.error.email',
-					['%code%' => $event->getVoucher()->id]
-				);
-			}
-
-			$this->get('voucher.e_voucher.mailer')->sendVoucher($event->getVoucher(), $user);
-		} catch (Exception\VoucherDisplayException $e) {
-			$message = $this->get('translator')->trans($e->getTranslation(), $e->getParams());
-			$this->get('http.session')->getFlashBag()->add('error', $message);
-			$this->get('log.errors')->warning($e->getMessage());
+		if (!$user || $user instanceof AnonymousUser) {
+			throw new Exception\EVoucherSendException(
+				'Could not send e-voucher with ID of `' . $event->getVoucher()->id . '` as user is ' . ($user ? 'anonymous' : 'null'),
+				'ms.voucher.evoucher.error.email',
+				['%code%' => $event->getVoucher()->id]
+			);
 		}
+
+		$this->get('voucher.e_voucher.mailer')->sendVoucher($event->getVoucher(), $user);
 	}
 
 	public function setVoucherItemStatus(Order\Event\Event $event)
