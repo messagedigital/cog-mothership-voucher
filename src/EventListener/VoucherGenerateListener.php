@@ -10,6 +10,7 @@ use Message\Mothership\Voucher\Loader as VoucherLoader;
 use Message\Mothership\Commerce\Order;
 use Message\Mothership\Commerce\Refund;
 
+use Message\User\AnonymousUser;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\Event\SubscriberInterface;
 
@@ -118,7 +119,9 @@ class VoucherGenerateListener implements SubscriberInterface
 		}
 		$voucher->id              = $this->_idGenerator->generate();
 		$voucher->purchasedAsItem = $item;
-		$voucher->authorship->create(new DateTimeImmutable, $item->order->user->id);
+		if ($item->order->user && !$item->order->user instanceof AnonymousUser) {
+			$voucher->authorship->create(new DateTimeImmutable, $item->order->user->id);
+		}
 
 		$this->_create->setTransaction($event->getTransaction());
 		$this->_create->create($voucher);
