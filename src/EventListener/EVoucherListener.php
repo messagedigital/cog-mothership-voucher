@@ -31,6 +31,18 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 		];
 	}
 
+	/**
+	 * Listen to order create event and check items for vouchers. If a voucher is amongst the items and e-vouchers
+	 * are enabled, then send it to the user. Annoyingly, we need to reload the user and voucher at this stage because
+	 * there's no easy way to access it from the event object (that I can see, at least)
+	 *
+	 * @param Order\Event\Event $event
+	 * @throws \LogicException                    Throws exception if voucher ID is not set on item
+	 * @throws \LogicException                    Throws exception if voucher cannot be loaded
+	 * @throws Exception\EVoucherSendException    Throws exception if the user is not set. This exception is caught
+	 *                                            and, if possible, a flash message is displayed to the user containing
+	 *                                            the voucher code
+	 */
 	public function sendEVoucherOnOrderComplete(Order\Event\Event $event)
 	{
 		if ($this->_eVouchersDisabled()) {
@@ -77,8 +89,8 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 	}
 
 	/**
-	 * @deprecated Some gateways have problems with sending the email this early as they do not have access to the session
-	 *             in the callback. Use `sendEVoucherOnOrderComplete` instead
+	 * @deprecated Some gateways have problems with sending the email this early as they do not have access to the
+	 * 	           session in the callback. Use `sendEVoucherOnOrderComplete` instead
 	 *
 	 * @param Event\VoucherEvent $event
 	 */
@@ -101,6 +113,11 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 		$this->get('voucher.e_voucher.mailer')->sendVoucher($event->getVoucher(), $user);
 	}
 
+	/**
+	 * Set status of voucher items to received if e-vouchers are enabled
+	 *
+	 * @param Order\Event\Event $event
+	 */
 	public function setVoucherItemStatus(Order\Event\Event $event)
 	{
 		if ($this->_eVouchersDisabled()) {
@@ -118,6 +135,13 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 		}
 	}
 
+	/**
+	 * Filter out voucher items from an entity collection and return as an array
+	 *
+	 * @param CollectionInterface $items
+	 *
+	 * @return array
+	 */
 	private function _getVoucherItems(CollectionInterface $items)
 	{
 		$vouchers = [];
@@ -134,6 +158,11 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 		return $vouchers;
 	}
 
+	/**
+	 * Check to see if vouchers are e-vouchers
+	 *
+	 * @return bool
+	 */
 	private function _eVouchersDisabled()
 	{
 		return !isset($this->get('cfg')->voucher->eVoucher) ||
@@ -141,6 +170,11 @@ class EVoucherListener extends CogEvent\EventListener implements CogEvent\Subscr
 			$this->_isEPOS();
 	}
 
+	/**
+	 * Check to see if the voucher was created within the EPOS module
+	 *
+	 * @return bool
+	 */
 	private function _isEPOS()
 	{
 		$controller = $this->get('request')->attributes->get('_controller');
