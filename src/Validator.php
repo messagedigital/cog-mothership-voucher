@@ -146,13 +146,13 @@ class Validator
 			]);
 		}
 
-		if ($order !== null && !$this->isValidForOrder($voucher, $order)) {
+		if (null !== $order && !$this->isValidForOrder($voucher, $order)) {
 			return $this->_translator->trans(self::TRANS_KEY_NOT_VALID_FOR_ORDER, [
 				'%id%' => $voucher->id,
 			]);
 		}
 
-		if (!$this->isValidOnCurrency($voucher, $order)) {
+		if (null !== $order && !$this->isValidOnCurrency($voucher, $order)) {
 			return $this->_translator->trans(self::TRANS_KEY_NOT_VALID_FOR_CURRENCY, [
 				'%id%' => $voucher->id,
 			]);
