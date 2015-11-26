@@ -31,7 +31,7 @@
   "require": {
     "php": ">=5.4.0",
     
-    "mothership-ec/cog"                     : "~4.11",
+    "mothership-ec/cog"                     : "~4.13",
     "mothership-ec/cog-mothership-commerce" : "~5.0",
     "mothership-ec/cog-mothership-reports"  : "~2.0"
   },

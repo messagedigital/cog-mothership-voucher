@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.3.0
+
+- E-voucher notification sent on order creation instead of voucher creation
+- Added `Exception` namespace
+- Added `Exception\VoucherDisplayException` for relaying information back to the user when there is an error
+- Added `Exception\EVoucherSendException` for displaying errors to users when an e-voucher could not be sent
+- Added `EventListener\EVoucherListener::sendEVoucherOnOrderComplete()` method to send e-vouchers when the `Order\Events::CREATE_COMPLETE` event is fired, assuming that there is a voucher on the order and e-vouchers are enabled
+- Deprecated `EventListener\EVoucherListener::sendEVoucher()` method in favour of `EventListener\EVoucherListener::sendEVoucherOnOrderComplete()`
+- Add user object to voucher authorship on voucher generation generated from an order and not instance of `Message\User\AnonymousUser` or null
+- Resolve issue where `Validator::getError()` would fail when checking currency if there is no order
+- Added `ms.voucher.evoucher.error.email` translation string for flash message when an e-voucher cannot be sent, takes a `%code%` parameter for the voucher code
+- Update `Cog` dependency to 4.13
+- Added `.travis.yml` file
+
 ## 2.2.2
 
 - Resolve issue where unwanted characters would appear in voucher codes
